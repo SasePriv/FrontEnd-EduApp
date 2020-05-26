@@ -1,0 +1,47 @@
+Arguments: 
+  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js add react-native-paper
+
+PATH: 
+  C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\Git\cmd;C:\Program Files\dotnet\;E:\Program\laragon\bin\php\php-7.2.19-Win32-VC15-x64;C:\ProgramData\ComposerSetup\bin;C:\Program Files\Java\jdk-13\bin;C:\Users\luisa\AppData\Local\Programs\Python\Python37-32\Scripts\;C:\Users\luisa\AppData\Local\Programs\Python\Python37-32\;C:\Users\luisa\AppData\Local\Microsoft\WindowsApps;C:\Users\luisa\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\luisa\AppData\Roaming\npm;C:\Users\luisa\AppData\Roaming\Composer\vendor\bin;C:\adb;C:\Program Files\nodejs\;C:\ProgramData\chocolatey\bin;C:\Program Files\PuTTY\;C:\ffmpeg\bin\;C:\Program Files (x86)\Yarn\bin\;C:\Users\luisa\AppData\Local\Microsoft\WindowsApps;C:\Users\luisa\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\luisa\AppData\Roaming\Composer\vendor\bin;C:\Users\luisa\AppData\Roaming\npm;C:\Users\luisa\AppData\Local\atom\bin;C:\Users\luisa\AppData\Local\Yarn\bin
+
+Yarn version: 
+  1.22.4
+
+Node version: 
+  12.14.1
+
+Platform: 
+  win32 x64
+
+Trace: 
+  Error: EPERM: operation not permitted, unlink 'E:\Trabajo\EduApp\front-end-eduApp\node_modules\file-uri-to-path\test'
+
+npm manifest: 
+  {
+    "main": "node_modules/expo/AppEntry.js",
+    "scripts": {
+      "start": "expo start",
+      "android": "expo start --android",
+      "ios": "expo start --ios",
+      "web": "expo start --web",
+      "eject": "expo eject"
+    },
+    "dependencies": {
+      "expo": "~37.0.3",
+      "react": "~16.9.0",
+      "react-dom": "~16.9.0",
+      "react-native": "https://github.com/expo/react-native/archive/sdk-37.0.1.tar.gz",
+      "react-native-web": "~0.11.7"
+    },
+    "devDependencies": {
+      "babel-preset-expo": "~8.1.0",
+      "@babel/core": "^7.8.6"
+    },
+    "private": true
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
