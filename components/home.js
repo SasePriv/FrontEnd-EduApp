@@ -9,10 +9,10 @@ import Card from './card'
 export default function Home(){
     return(
         <View style={styles.containerHome}>
-            {/* <HeaderMenu/>
-            <Nav /> */}
-            {/* <Header/>
-            <Card/> */}
+            <HeaderMenu/>
+            {/* <Nav /> */}
+            <Header/>
+            <Card/>
         </View>
     )
 }

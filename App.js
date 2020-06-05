@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
 import { Provider as PaperProvider } from 'react-native-paper';
+import { NavigationContainer } from '@react-navigation/native';
 import { StyleSheet, View, Text,TouchableWithoutFeedback, Keyboard} from 'react-native';
 import Login from './components/login'
-import Home from './components/home'
+import Sandbox from './components/ejemplos/sandbox'
+import Main from './screens/main'
 
 
 export default function App() {
   
-  return (    
-      <PaperProvider>
-        <View style={styles.container}>
-          <Login />
-          {/* <Home /> */}
-        </View>
-      </PaperProvider>
+  return (        
+      <NavigationContainer>
+          <View style={styles.container}>
+            <Main />
+          </View>
+      </NavigationContainer>          
   );
 }
 
