@@ -2,7 +2,9 @@ import React from 'react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Login from '../components/login'
-import Home from './home'
+import MyCourses from './myCourses'
+import HomeStack from '../routes/homeStack'
+import CoursesStack from '../routes/coursesStack'
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -10,39 +12,39 @@ export default function MyTabs() {
   return (
     <Tab.Navigator
       initialRouteName="Home"
-      activeColor="#fff"
-    //   style={{ backgroundColor: 'tomato' }}
+      activeColor="#fff"    
+      barStyle={{ backgroundColor: '#0080ff' }}
     >
       <Tab.Screen
         name="Conference"
         component={Login}
         options={{
           tabBarLabel: 'Conference',
-          tabBarColor: '#3F51B5',
+          // tabBarColor: '#3F51B5',
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="video" color={color} size={26} />
+            <MaterialCommunityIcons name="video" color={color} size={27} />
           ),
         }}
       />
       <Tab.Screen
         name="Courses"
-        component={Login}
+        component={CoursesStack}
         options={{
-          tabBarLabel: 'Courses',
-          tabBarColor: '#009688',
+          tabBarLabel: 'Mis Cursos',
+          // tabBarColor: '#009688',
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="book" color={color} size={26} />
+            <MaterialCommunityIcons name="book" color={color} size={27} />
           ),
         }}
       />
       <Tab.Screen
         name="Home"
-        component={Home}
+        component={HomeStack}
         options={{
           tabBarLabel: 'Home',
-          tabBarColor: '#795548',
+          // tabBarColor: '#795548',
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="home" color={color} size={26} />
+            <MaterialCommunityIcons name="home" color={color} size={27} />
           ),
         }}
       />
@@ -51,23 +53,12 @@ export default function MyTabs() {
         component={Login}
         options={{
           tabBarLabel: 'Profile',
-          tabBarColor: '#607D8B',
+          // tabBarColor: '#607D8B',
           tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="account" color={color} size={26} />
+            <MaterialCommunityIcons name="account" color={color} size={27} />
           ),
         }}
-      />
-      <Tab.Screen
-        name="Settings"
-        component={Login}
-        options={{
-          tabBarLabel: 'Settings',
-          tabBarColor: '#607D8B',
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="account" color={color} size={26} />
-          ),
-        }}
-      />
+      />  
     </Tab.Navigator>
   );
 }
