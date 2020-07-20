@@ -3,11 +3,15 @@ import { createStackNavigator, TransitionPresets, CardStyleInterpolators } from 
 import { StyleSheet } from 'react-native'
 import MyCourses from '../screens/myCourses'
 import Curso from '../screens/curso'
-import Lesson from '../screens/lesson'
+import AddModule from '../screens/addModule'
+import AddCourses from '../screens/addCourse'
+import AddOptions from '../screens/addOptions'
+import ModuleForm from '../screens/moduleForm'
+import MyCoursesCreated from '../screens/myCoursesCreated'
 
 const Stack = createStackNavigator();
 
-export default function CoursesStack() {
+export default function AddOptionStack() {
     return (
             <Stack.Navigator
                 screenOptions={{
@@ -18,14 +22,16 @@ export default function CoursesStack() {
                 headerMode="float"
                 >
                 <Stack.Screen 
-                    name="Mis Cursos" 
-                    component={MyCourses}
+                    name="Nueva Opcion" 
+                    component={AddOptions}
                     options={{
                         headerTitleStyle: styles.headerTitle
                     }}
                 />
-                <Stack.Screen name="Curso" component={Curso}/>
-                <Stack.Screen name="Lesson" component={Lesson}/>
+                <Stack.Screen name="Añadir Curso" component={AddCourses}/>
+                <Stack.Screen name="MyCoursesCreated" component={MyCoursesCreated}/>
+                <Stack.Screen name="AddModule" component={AddModule}/>
+                <Stack.Screen name="ModuleForm" component={ModuleForm}/>
             </Stack.Navigator>
         )
 }

@@ -1,34 +1,44 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { StyleSheet, View, FlatList, TouchableOpacity, Image, Text } from 'react-native'
 import { Searchbar , Card, Title, Subheading } from 'react-native-paper';
+import axios from 'axios'
+import AsyncStorage from '@react-native-community/async-storage';
 
-export default function MyCourses({navigation}) {
+export default function MyCoursesCreated({navigation}) {
 
     const [textSearch, setTextSearch] = useState("")
+    const [user_id, setUser_Id] = useState(null)
+    const [data, setData] = useState([])
 
-    const info =[
-        {
-            id: 1,
-            title: "Guitarra Acustica Basico",
-            descrip: "Luis Sanchez",
-            uri: 'https://picsum.photos/700'   
-        },
-        {
-            id: 2,
-            title: "Bajo Nivel Basico",
-            descrip: "Fernando",
-            uri: 'https://picsum.photos/700'   
-        },
-        {
-            id: 3,
-            title: "Bajo Nivel Basico",
-            descrip: "Fernando",
-            uri: 'https://picsum.photos/700'   
-        }
-    ]
+    useEffect(() => {
+        getUser()
+    },[])
 
-    const onPress = () => {
-        navigation.navigate('Curso')
+    const getUser = async ()=> {
+        const user_Id = await AsyncStorage.getItem('userData')
+        setUser_Id(JSON.parse(user_Id)._id)
+        fetchAllCoursesOfTeacher(JSON.parse(user_Id)._id)
+        console.log(user_Id)
+    }
+
+    const fetchAllCoursesOfTeacher = async (user_id) => {
+        const dataForm = new FormData()
+        dataForm.append("user_id", user_id)
+        await axios
+        .post('http://192.168.1.2:4000/getAllTeacherCourses', dataForm)
+        .then(res => {
+            if (res.data.response) {
+                console.log(res.data)
+                setData(res.data.data)
+            }else{
+                console.log(res.data.message)
+            }
+        })
+
+    }
+
+    const onPress = (coursesId) => {
+        navigation.navigate('AddModule', {coursesId})
     }
 
     return(
@@ -41,26 +51,18 @@ export default function MyCourses({navigation}) {
             />
 
             <FlatList
-                data={info}
-                keyExtractor={item => item.id}
+                data={data.coursesTeacher}
+                keyExtractor={item => item._id}
                 renderItem={ ({item}) => 
-                    <TouchableOpacity onPress={() => onPress()}>
+                    <TouchableOpacity onPress={() => onPress(item._id)}>
                         <View style={styles.containerCard}>
                             <Card elevation={7} style={styles.card}>
-                                {/* <Card.Title 
-                                    title={item.title} 
-                                    subtitle={"Por: "+item.descrip} 
-                                    subtitleStyle={styles.subtitleCard}
-                                    style={styles.cardContent}
-                                    left={() => <Image style={{width: 70, height: 70}} source={{uri: 'https://picsum.photos/700'}} />}
-                                    leftStyle={{}}
-                                /> */}
                                 <View style={{flexDirection: "row"}}>
-                                    <Image resizeMode="cover" style={styles.contentContainer} source={{uri: 'https://image.winudf.com/v2/image1/Y29tLmx1eC5saXZlLndhbGxwYXBlcnMuYW5kLmNyZWF0aXZlLmZhY3Rvcnkud2FsbHBhcGVycy5iYWNrZ3JvdW5kcy5oZC5sd3AuZ3VpdGFyLmxpdmUud2FsbHBhcGVyX3NjcmVlbl8zXzE1NDk4NTgzNjRfMDQ5/screen-3.jpg?fakeurl=1&type=.jpg'}} />
+                                    <Image resizeMode="cover" style={styles.contentContainer} source={{uri: 'http://192.168.1.2:4000//coursesImages/'+item.mainImage}} />
                                     <View>
-                                        <Text style={styles.tileCard}>Curso de Guitarra Electrica NIVEL 1</Text>
-                                        <Text style={styles.descripCard}>Por: Luis Sanchez</Text>                                
-                                        <Text style={{width: 270, padding: 10, paddingTop: 5}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In fermentum accumsan viverra. Aliquam ornare pellentesque malesuada. Sed ut neque eu urna sagittis pellentesque eu ut sapien.</Text>
+                                        <Text style={styles.tileCard}>{item.title}</Text>
+                                        <Text style={styles.descripCard}>Por: {data.userInfo.name}</Text>                                
+                                        <Text style={{width: 270, padding: 10, paddingTop: 5}}>{item.description.slice(0, 150)+"..."}</Text>
                                     </View>                                                                                                            
                                 </View>                                
                             </Card>

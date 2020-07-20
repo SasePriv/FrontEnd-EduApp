@@ -1,12 +1,18 @@
 import React from 'react'
-import { StyleSheet, Text, View, Image } from 'react-native'
+import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity } from 'react-native'
 import { Divider } from 'react-native-paper';
 import {AntDesign} from "@expo/vector-icons"
 
 const ejemplo = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In fermentum accumsan viverra. Aliquam ornare pellentesque malesuada. Sed ut neque eu urna sagittis pellentesque eu ut sapien. Suspendisse laoreet semper dolor at ultrices. In hac habitasse platea dictumst. Mauris lacinia neque vel turpis consectetur, at aliquet nibh rutrum"
 
-export default function Curso() {
+export default function Curso({ navigation }) {
+
+    const onPress = () => {
+        navigation.navigate('Lesson')
+    }
+
     return(
+        <ScrollView>
         <View style={{padding: 10}}>
             <View style={[styles.containerHeader, styles.shadow]}>
                 <Image 
@@ -29,31 +35,27 @@ export default function Curso() {
                     <Text style={[styles.contentInfo, styles.viewMore]}>Ver Mas</Text>
                 </View>                
             </View>    
-            <Text style={[styles.boxTitle, styles.shadow]}>MODULOS</Text>
-            <View style={{alignItems: "center"}}>
-                <View style={[styles.moduloContainer, styles.shadow]}>
-                    <Text style={styles.modulo}>Modulo 1: Teclas</Text>                    
-                    <AntDesign style={styles.icon} name='book' size={30} color='#0080ff' />
-                </View>    
-                <View style={[styles.moduloContainer, styles.shadow]}>
-                    <Text style={styles.modulo}>Modulo 1: Teclas</Text>                    
-                    <AntDesign style={styles.icon} name='book' size={30} color='#0080ff' />
-                </View>
-                <View style={[styles.moduloContainer, styles.shadow]}>
-                    <Text style={styles.modulo}>Modulo 1: Teclas</Text>                    
-                    <AntDesign style={styles.icon} name='book' size={30} color='#0080ff' />
-                </View>
-                <View style={[styles.moduloContainer, styles.shadow]}>
-                    <Text style={styles.modulo}>Modulo 1: Teclas</Text>                    
-                    <AntDesign style={styles.icon} name='book' size={30} color='#0080ff' />
-                </View>
-                <View style={[styles.moduloContainer, styles.shadow]}>
-                    <Text style={styles.modulo}>Modulo 1: Teclas</Text>                    
-                    <AntDesign style={styles.icon} name='book' size={30} color='#0080ff' />
-                </View>                                                                    
-            </View>
-            <Divider />
-        </View>
+            <Text style={[styles.boxTitle, styles.shadow]}>MODULOS</Text>            
+                <View style={{alignItems: "center"}}>                    
+                    <TouchableOpacity onPress={onPress} style={[styles.moduloContainer, styles.shadow]}>
+                        <Text style={styles.modulo}>MODULO 1: Teclas</Text>                    
+                        <AntDesign style={styles.icon} name='book' size={30} color='#0080ff' />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={onPress} style={[styles.moduloContainer, styles.shadow]}>
+                        <Text style={styles.modulo}>MODULO 2: Acordes</Text>                    
+                        <AntDesign style={styles.icon} name='book' size={30} color='#0080ff' />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={onPress} style={[styles.moduloContainer, styles.shadow]}>
+                        <Text style={styles.modulo}>MODULO 3: Teoria</Text>                    
+                        <AntDesign style={styles.icon} name='book' size={30} color='#0080ff' />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={onPress} style={[styles.moduloContainer, styles.shadow]}>
+                        <Text style={styles.modulo}>MODULO 4: Tecnicas</Text>                    
+                        <AntDesign style={styles.icon} name='book' size={30} color='#0080ff' />
+                    </TouchableOpacity>
+                </View>                     
+        </View> 
+        </ScrollView>      
     )
 }
 
@@ -158,10 +160,12 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginBottom: 1,
         flexDirection: "row",
-        justifyContent: "space-between"
+        justifyContent: "space-between",        
     },
     modulo: {
-        padding: 10,
+        padding: 15,
+        fontSize: 14,
+        fontWeight: "bold",        
     },
     icon: {
         padding: 5

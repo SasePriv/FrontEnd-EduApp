@@ -1,15 +1,19 @@
-import React from 'react'
+import React, {useContext} from 'react'
 import { StyleSheet, Text, View, ScrollView, Button, Dimensions } from 'react-native'
 import GridCategory from '../components/gridCategory'
 import ContentNew from '../components/contentNew'
 import CustomModal from './customModal'
 import { connect } from "react-redux"
 
+import { AuthContext } from '../components/context'
+
 const screenHeight = Dimensions.get("window").height
 let selected = ""
 let status = false
 
 function Home({navigation, openModal}) {
+
+    const { signOut } = useContext(AuthContext)
 
     function onPressFunction(informacion) {
         selected = informacion
@@ -28,6 +32,9 @@ function Home({navigation, openModal}) {
                 close={close}
             />
             <ScrollView>
+                <View style={{alignContent:"center", alignItems: "center", padding: 5}}>
+                    <Button onPress={() => signOut()} title="logout-test" />
+                </View>
                 <Text style={styles.subTitle}>Nuevo</Text>
                 <ContentNew 
                    onPressFun={onPressFunction}/>

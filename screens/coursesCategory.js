@@ -14,14 +14,14 @@ function CoursesCategory({openModal, action}) {
         {
             id: 1,
             title: "Guitarra Acustica Basico",
-            descrip: "Luis Sanchez",
-            uri: 'https://picsum.photos/700'   
+            descrip: "Elisa Fernandez",
+            uri: 'https://image.winudf.com/v2/image1/Y29tLmx1eC5saXZlLndhbGxwYXBlcnMuYW5kLmNyZWF0aXZlLmZhY3Rvcnkud2FsbHBhcGVycy5iYWNrZ3JvdW5kcy5oZC5sd3AuZ3VpdGFyLmxpdmUud2FsbHBhcGVyX3NjcmVlbl8zXzE1NDk4NTgzNjRfMDQ5/screen-3.jpg?fakeurl=1&type=.jpg'   
         },
         {
             id: 2,
             title: "Bajo Nivel Basico",
             descrip: "Fernando",
-            uri: 'https://picsum.photos/700'   
+            uri: 'https://image.winudf.com/v2/image1/Y29tLmx1eC5saXZlLndhbGxwYXBlcnMuYW5kLmNyZWF0aXZlLmZhY3Rvcnkud2FsbHBhcGVycy5iYWNrZ3JvdW5kcy5oZC5sd3AuZ3VpdGFyLmxpdmUud2FsbHBhcGVyX3NjcmVlbl8zXzE1NDk4NTgzNjRfMDQ5/screen-3.jpg?fakeurl=1&type=.jpg'   
         },
         {
             id: 3,
@@ -85,7 +85,7 @@ function CoursesCategory({openModal, action}) {
                                         )
                                     }}
                                 />
-                                <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
+                                <Card.Cover source={{ uri: 'https://image.winudf.com/v2/image1/Y29tLmx1eC5saXZlLndhbGxwYXBlcnMuYW5kLmNyZWF0aXZlLmZhY3Rvcnkud2FsbHBhcGVycy5iYWNrZ3JvdW5kcy5oZC5sd3AuZ3VpdGFyLmxpdmUud2FsbHBhcGVyX3NjcmVlbl8zXzE1NDk4NTgzNjRfMDQ5/screen-3.jpg?fakeurl=1&type=.jpg' }} />
                                 <Text style={styles.descripCardText}>Horas 120h - Guitarra</Text>    
                                 <Text style={styles.contentDescrip}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In fermentum accumsan viverra. Aliquam ornare pellentesque malesuada. Sed ut neque eu urna sagittis pellentesque eu ut sapien. Suspendisse laoreet semper dolor at ultrices. In hac habitasse platea dictumst. Mauris lacinia neque vel turpis consectetur, at aliquet nibh rutrum ...</Text>
                                 <Text style={styles.descripCard}>Por: Luis Sanchez</Text>                                

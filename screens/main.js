@@ -1,14 +1,40 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import Login from '../components/login'
-import MyCourses from './myCourses'
 import HomeStack from '../routes/homeStack'
 import CoursesStack from '../routes/coursesStack'
+import AddOptionStack from '../routes/addOptionStack'
+import AsyncStorage from '@react-native-community/async-storage';
 
 const Tab = createMaterialBottomTabNavigator();
 
 export default function MyTabs() {
+
+  const [typeOfUser, setTypeOfUser] = useState(null)
+
+  useEffect(() =>{ 
+    handleAsync()
+  },[])
+
+  const handleAsync  = async() => {
+    let dataAsync;
+    try {
+      dataAsync = await AsyncStorage.getItem('userData')
+    } catch (error) {
+      console.log(error)
+    }
+
+    console.log("ver")
+    console.log(JSON.parse(dataAsync))
+
+    if(dataAsync){
+      setTypeOfUser(JSON.parse(dataAsync).typeOfUser)
+    }
+  }
+
+  console.log(typeOfUser)
+
   return (
     <Tab.Navigator
       initialRouteName="Home"
@@ -26,6 +52,8 @@ export default function MyTabs() {
           ),
         }}
       />
+      {typeOfUser == "user" 
+      ?
       <Tab.Screen
         name="Courses"
         component={CoursesStack}
@@ -37,6 +65,27 @@ export default function MyTabs() {
           ),
         }}
       />
+      :
+      null
+      }
+      
+      {typeOfUser == "teacher" 
+      ? 
+      <Tab.Screen
+        name="Add Courses"
+        component={AddOptionStack}
+        options={{
+          tabBarLabel: 'Añadir Cursos',
+          // tabBarColor: '#009688',
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="book" color={color} size={27} />
+          ),
+        }}
+      />
+      :
+      null
+      }
+      
       <Tab.Screen
         name="Home"
         component={HomeStack}

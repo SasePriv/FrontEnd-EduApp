@@ -49,13 +49,13 @@ function CustomModal({action, CloseModal, data, close}){
                         <ImageBackground 
                             style={{ flex: 1,}}  
                             // imageStyle={{ borderRadius: 10 }}
-                            source={{uri: 'https://picsum.photos/700'}} />
+                            source={{uri: 'https://image.winudf.com/v2/image1/Y29tLmx1eC5saXZlLndhbGxwYXBlcnMuYW5kLmNyZWF0aXZlLmZhY3Rvcnkud2FsbHBhcGVycy5iYWNrZ3JvdW5kcy5oZC5sd3AuZ3VpdGFyLmxpdmUud2FsbHBhcGVyX3NjcmVlbl8zXzE1NDk4NTgzNjRfMDQ5/screen-3.jpg?fakeurl=1&type=.jpg'}} />
                         <View style={styles.hoverImage}>
                             <ModelTileBody>{data.title}</ModelTileBody>
                             <View style={styles.containerImage}>                                
                                 <Image resizeMode="cover" style={styles.contentContainer} source={{uri: 'https://www.webconsultas.com/sites/default/files/styles/wc_adaptive_image__small/public/articulos/perfil-resilencia.jpg'}} />
                             </View>
-                            <Text style={styles.descripCard}>Por: Luis Sanchez</Text>     
+                            <Text style={styles.descripCard}>Por: Elizabeth D.</Text>     
                         </View>
                     </Header>     
 
