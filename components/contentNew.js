@@ -24,7 +24,7 @@ function ContentNews({onPressFun}) {
 
     const fecthInfo = async() => {
         await axios
-        .get('http://10.0.2.2   :4000/getLastestCourses')
+        .get('http://10.0.2.2:4000/getLastestCourses')
         .then(res => {
             console.log("asdasd")
             console.log(res.data)

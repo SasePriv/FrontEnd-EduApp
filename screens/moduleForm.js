@@ -20,7 +20,7 @@ const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.7);
 
 
 
-export default function ModuleForm({route, navigation: { goBack }}){
+export default function ModuleForm({route, navigation}){
 
     const [form, setForm] = useState({
         title: "",
@@ -39,6 +39,8 @@ export default function ModuleForm({route, navigation: { goBack }}){
     const [loading, setLoading] = useState(false)
 
     const [edit, setEdit] = useState(false)
+
+    const { fetchCourseData } =  route.params;
 
     useEffect(() => {
         const { coursesId } =  route.params;
@@ -189,7 +191,8 @@ export default function ModuleForm({route, navigation: { goBack }}){
         array.splice(index, 1)
         setForm({
             ...form,
-            info: array
+            info: array,
+            contadorImage: form.contadorImage - 1
         })        
     }
 
@@ -221,14 +224,21 @@ export default function ModuleForm({route, navigation: { goBack }}){
         array.splice(index, 1)
         setForm({
             ...form,
-            documents: array
+            documents: array,
+            contadorFiles: form.contadorFiles - 1
         })        
     }
 
     const handleSubmit = async () => {
-        let fileType = form.video.substring(form.video.lastIndexOf(".") + 1);
+
+        let fileType = null;
         let contImage = 0
         let contFiles = 0
+
+        if (form.typeVideo == "upload") {
+            fileType = form.video.substring(form.video.lastIndexOf(".") + 1);    
+        }
+
         const data = new FormData();
         //colocar aqui el id del usuario
         data.append('coursesId', course_id)
@@ -237,11 +247,18 @@ export default function ModuleForm({route, navigation: { goBack }}){
         data.append('type_of_video_source', form.typeVideo)
         data.append('contadorImage', form.contadorImage)
         data.append('contadorFiles', form.contadorFiles)
-        data.append('attachmentVideo', {
-            uri: form.video,
-            name: `videoModule.${fileType}`,
-            type: `video/${fileType}`
-        })
+
+        if (form.typeVideo == "url") {
+            data.append('attachmentVideo', form.urlvideo)
+        }else{
+            data.append('attachmentVideo', {
+                uri: form.video,
+                name: `videoModule.${fileType}`,
+                type: `video/${fileType}`
+            })
+        }
+
+        
 
         if (form.contadorFiles > 0) {
             data.append('files_for_donwload', 'yes')
@@ -259,7 +276,6 @@ export default function ModuleForm({route, navigation: { goBack }}){
                         name: `photo.${typeFile}`,
                         type: `image/${typeFile}`
                     })
-    
                     contImage ++;
                 }    
             });
@@ -275,7 +291,6 @@ export default function ModuleForm({route, navigation: { goBack }}){
                         name: `${element.name}.${typeFile}`,
                         type: `file/${typeFile}`
                     })
-    
                     contFiles ++;
                 }    
             });
@@ -295,8 +310,9 @@ export default function ModuleForm({route, navigation: { goBack }}){
             if (res.data.response) {
                 console.log(res.data)
                 setLoading(false)
-                // navigation.navigate('AddModule', {coursesId: res.data.data.coursesId})
-                goBack()
+
+                fetchCourseData(course_id)
+                navigation.navigate('AddModule', {coursesId: course_id})                
             }else{
                 console.log(res.data.message)
             }
@@ -306,8 +322,7 @@ export default function ModuleForm({route, navigation: { goBack }}){
         })
 
     }
-
-    console.log(form)
+    console.log(course_id)
 
     if(loading){
         return(

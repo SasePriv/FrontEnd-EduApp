@@ -3,7 +3,9 @@ import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, FlatList, 
 import { Divider } from 'react-native-paper';
 import {AntDesign} from "@expo/vector-icons"
 import { useSafeArea } from 'react-native-safe-area-context';
+import { FontAwesome } from '@expo/vector-icons'; 
 import axios from 'axios'
+import { HeaderBackButton } from '@react-navigation/stack'; 
 
 const ejemplo = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In fermentum accasdasiopdasdioashduiasgduiashduiASHduasdh hsduiahdu umsan viverra. Aliquam ornare pellentesque malesuada. Sed ut neque eu urna sagittis pellentesque eu ut sapien. Suspendisse laoreet semper dolor at ultrices. In hac habitasse platea dictumst. Mauris lacinia neque vel turpis consectetur, at aliquet nibh rutrum"
 
@@ -14,10 +16,22 @@ export default function Curso({ route ,navigation }) {
     const [course_id, setCourse_Id] = useState("")
 
     useEffect(() => {
+        console.log( route.params)
         const { coursesId } =  route.params;
         setCourse_Id(coursesId)
-        fetchCourseData(coursesId)
+        fetchCourseData(coursesId)        
     },[])
+
+    navigation.setOptions({
+        headerLeft: (props) => (
+            <HeaderBackButton
+                {...props}
+                onPress={() => {
+                    navigation.navigate('Nueva Opcion')
+                }}
+            />
+        ),
+    });
 
     const fetchCourseData = async (courseId) => {
         const dataForm = new FormData()
@@ -41,17 +55,27 @@ export default function Curso({ route ,navigation }) {
     }
 
     const onPress = () => {
-        navigation.navigate('ModuleForm', {coursesId: course_id})
+        navigation.navigate('ModuleForm', {coursesId: course_id, fetchCourseData: (coursesId) => fetchCourseData(coursesId)})
     }
 
     const handleEachModuleAction = (moduleId) => {
         navigation.navigate('ModuleForm', {coursesId: course_id, moduleId})
     }
 
-    const data = [
-        {title: "uno"},
-        {title: "dos"}
-    ]
+    const handleEliminateCourse = async() => {
+        const dataSend = new FormData();
+        dataSend.append('courseId', course_id);
+
+        await axios
+        .post('http://192.168.1.2:4000/eliminateCourse', dataSend)
+        .then(res => {
+            if (res.data.response) {
+                navigation.navigate('Nueva Opcion')
+            }else{
+                console.log(res.data.message)
+            }
+        })
+    }
 
     if (loading) {
         return(
@@ -94,7 +118,21 @@ export default function Curso({ route ,navigation }) {
                     <Text style={styles.titleCurso}>{dataInfo.course?.title}</Text>    
                     <Text style={styles.contentInfo}>Horas: {dataInfo.course?.hours}h</Text>
                     <Text style={styles.contentInfo}>Fecha: {dateYear(dataInfo.course?.createdAt)}</Text>
-                    <Text style={[styles.contentInfo, styles.readDescrip]}>{dataInfo.course?.description.slice(0, 100)+"..."}</Text>                   
+                    <Text style={[styles.contentInfo, styles.readDescrip]}>{dataInfo.course?.description.slice(0, 100)+"..."}</Text>    
+
+                    <View style={styles.CourseBtn}>
+                        <View style={styles.iconOptions}>
+                            <TouchableOpacity>
+                                <FontAwesome name="edit" size={50} color="#0080ff" />
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.iconOptions}>
+                            <TouchableOpacity onPress={handleEliminateCourse} >
+                                <AntDesign name="delete" size={46} color="red" />
+                            </TouchableOpacity>
+                        </View>
+                    </View>               
+
                     {/* <Text style={[styles.contentInfo, styles.viewMore]}>Ver Mas</Text> */}
                 </View>                
             </View>    
@@ -246,5 +284,13 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center"
-      }
+    },
+    CourseBtn: {
+        flexDirection: "row",
+        justifyContent: "center",
+        marginTop: 10
+    },
+    iconOptions: {
+        paddingHorizontal: 10
+    }
 })

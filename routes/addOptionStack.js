@@ -30,7 +30,10 @@ export default function AddOptionStack() {
                 />
                 <Stack.Screen name="Añadir Curso" component={AddCourses}/>
                 <Stack.Screen name="MyCoursesCreated" component={MyCoursesCreated}/>
-                <Stack.Screen name="AddModule" component={AddModule}/>
+                <Stack.Screen 
+                    name="AddModule" 
+                    component={AddModule}                    
+                />
                 <Stack.Screen name="ModuleForm" component={ModuleForm}/>
             </Stack.Navigator>
         )
