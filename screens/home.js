@@ -1,9 +1,10 @@
-import React, {useContext} from 'react'
+import React, {useState,useContext} from 'react'
 import { StyleSheet, Text, View, ScrollView, Button, Dimensions } from 'react-native'
 import GridCategory from '../components/gridCategory'
 import ContentNew from '../components/contentNew'
 import CustomModal from './customModal'
 import { connect } from "react-redux"
+import axios from 'axios'
 
 import { AuthContext } from '../components/context'
 
@@ -15,11 +16,55 @@ function Home({navigation, openModal}) {
 
     const { signOut } = useContext(AuthContext)
 
+    const [attachmentSelectedCourse, setAttachmentSelectedCourse] = useState([])
+    const [namesModulosCourses, setNamesModulosCourses] = useState()
+
     function onPressFunction(informacion) {
-        selected = informacion
+        console.log(informacion)
+        fetchAttachmentCourse(informacion.course._id)
+        fetcGetNamesModulesOfCourse(informacion.course._id)
+        selected = {
+            dataSelectedCourse: informacion.course,
+            userInfo: informacion.userInfo,
+            attachmentSelectedCourse,
+            namesModulosCourses
+        }
         status = true
         openModal() 
     }
+
+    const fetchAttachmentCourse = async (courseId) =>{
+        const dataSend = new FormData();
+        dataSend.append('courseId', courseId)
+
+        await axios
+        .post('http://10.0.2.2:4000/getAttachmentsOfCourse', dataSend)
+        .then(res => {
+            // console.log(res.data)
+            if (res.data.response) {
+                setAttachmentSelectedCourse(res.data.data)
+            } else {
+                console.log(res.data.message)
+            }
+        })
+    }
+
+    const fetcGetNamesModulesOfCourse = async (courseId) =>{
+        const dataSend = new FormData();
+        dataSend.append('courseId', courseId)
+
+        await axios
+        .post('http://10.0.2.2:4000/getNamesModulesOfCourse', dataSend)
+        .then(res => {
+            // console.log(res.data)
+            if (res.data.response) {
+                setNamesModulosCourses(res.data.data)
+            } else {
+                console.log(res.data.message)
+            }
+        })
+    }
+
 
     const close = () => {
         status = false

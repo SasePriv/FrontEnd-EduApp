@@ -5,13 +5,14 @@ import { Animated, TouchableOpacity, Dimensions, Text, ImageBackground, ScrollVi
 import * as Icon from "@expo/vector-icons"
 import { connect } from "react-redux"
 import ParalaxImage from '../components/parallaxImage'
+import { $CombinedState } from "redux"
 
 const screenHeight = Dimensions.get("window").height
 
 function CustomModal({action, CloseModal, data, close}){
 
     const [top, setTop] = useState(new Animated.Value(screenHeight));
-    const [expanded, setExpanded] = useState(true)
+    const [expanded, setExpanded] = useState(true);
 
     const AnimatedContainer = Animated.createAnimatedComponent(Container)
 
@@ -24,6 +25,7 @@ function CustomModal({action, CloseModal, data, close}){
             Animated.spring(top, {
                 toValue: 0
             }).start()
+          
         }
         if (action === "closeModal") {
             Animated.spring(top, {
@@ -40,6 +42,8 @@ function CustomModal({action, CloseModal, data, close}){
         CloseModal()
     }
 
+    console.log(data)
+
     return(
         <AnimatedContainer style={{ top: top }}>            
             <Container>
@@ -49,13 +53,13 @@ function CustomModal({action, CloseModal, data, close}){
                         <ImageBackground 
                             style={{ flex: 1,}}  
                             // imageStyle={{ borderRadius: 10 }}
-                            source={{uri: 'https://image.winudf.com/v2/image1/Y29tLmx1eC5saXZlLndhbGxwYXBlcnMuYW5kLmNyZWF0aXZlLmZhY3Rvcnkud2FsbHBhcGVycy5iYWNrZ3JvdW5kcy5oZC5sd3AuZ3VpdGFyLmxpdmUud2FsbHBhcGVyX3NjcmVlbl8zXzE1NDk4NTgzNjRfMDQ5/screen-3.jpg?fakeurl=1&type=.jpg'}} />
+                            source={{uri: 'http://192.168.1.2:4000//coursesImages/' + data.dataSelectedCourse?.mainImage}} />
                         <View style={styles.hoverImage}>
-                            <ModelTileBody>{data.title}</ModelTileBody>
+                            <ModelTileBody>{data.dataSelectedCourse?.title}</ModelTileBody>
                             <View style={styles.containerImage}>                                
-                                <Image resizeMode="cover" style={styles.contentContainer} source={{uri: 'https://www.webconsultas.com/sites/default/files/styles/wc_adaptive_image__small/public/articulos/perfil-resilencia.jpg'}} />
+                                <Image resizeMode="cover" style={styles.contentContainer} source={{uri: 'http://192.168.1.2:4000//profileImages/' + data.userInfo?.profile_image}} />
                             </View>
-                            <Text style={styles.descripCard}>Por: Elizabeth D.</Text>     
+                            <Text style={styles.descripCard}>Por: {data.userInfo?.name}</Text>     
                         </View>
                     </Header>     
 
@@ -71,7 +75,7 @@ function CustomModal({action, CloseModal, data, close}){
 
                     {/* Barra de Precio */}
                     <PriceBar>
-                        <PriceText style={styles.shadow}>PRECIO: 40$</PriceText>
+                        <PriceText style={styles.shadow}>PRECIO: {data.dataSelectedCourse?.price ?  data.dataSelectedCourse?.price + "$" : "FREE" }</PriceText>
                         <Icon.FontAwesome5 style={styles.cartIcon} name='shopping-cart' size={22} color='white' />
                         <TouchableOpacity>
                             <ButtonPay style={styles.shadow}>
@@ -84,19 +88,28 @@ function CustomModal({action, CloseModal, data, close}){
 
                     <Body>                        
                         <Text style={styles.subTitleImagenes}>Imagenes</Text>
-                        <ParalaxImage />
+                        <ParalaxImage 
+                            arrayImage={data.attachmentSelectedCourse}
+                        />
                         <Text style={styles.subTitleDescrip}>Descripcion</Text>
-                        <ModelDescripctionBody>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam dictum eros ut nulla placerat congue. Sed quis molestie neque. Sed nec magna mauris. Aliquam vestibulum urna nec feugiat accumsan. Curabitur in posuere sem. In id ante convallis, vehicula diam vel, condimentum eros. Donec sapien nunc, malesuada vel auctor in, congue sed enim. Aenean rhoncus quis felis eu cursus. Curabitur at velit congue, tristique eros et, faucibus dolor. Etiam lorem eros, fringilla pretium nunc vitae, sollicitudin malesuada nunc. Aliquam vel magna mi. Etiam nisi leo, bibendum in nibh ut, pellentesque vestibulum sem. Vivamus non leo ac tellus venenatis fermentum quis sit amet purus.
-
-    Vestibulum quis vulputate ex. Nam at odio varius, iaculis neque vel, ullamcorper massa. Sed vitae elit sodales, mollis felis venenatis, egestas nisl. Nulla quis libero sed neque cursus vehicula. Sed et eleifend tortor. Vestibulum ultricies tincidunt massa, sit amet consequat ipsum sollicitudin ornare. Aliquam erat volutpat. Suspendisse gravida rhoncus ante, vel iaculis nulla finibus quis. Vestibulum at malesuada ante. Suspendisse ullamcorper iaculis ultrices. Curabitur malesuada bibendum neque id pulvinar. Maecenas scelerisque, nisl sed congue pellentesque, odio felis tempus urna, sit amet dictum est ante sed orci. In cursus turpis nec orci eleifend, sed maximus tortor ultricies. Sed viverra lorem elit, quis efficitur felis vulputate sed. Vestibulum ut convallis ipsum. Mauris vitae dignissim est.</ModelDescripctionBody>
+                        <ModelDescripctionBody>{data.dataSelectedCourse?.description}</ModelDescripctionBody>
                         <List.Accordion
                             title="Modulos"
                             left={props => <List.Icon {...props} icon="book-open" />}                        
                             raised theme={{ colors: {primary: '#0080ff'} }}
                             style={{marginTop: -10,}}
                         >
-                            <List.Item title="Modulo 1: Acordes" />
-                            <List.Item title="Modulo 1: Notas" />
+                        {data.namesModulosCourses
+                        ?
+                            data.namesModulosCourses.map(module => {
+                                return (<List.Item title={"Modulo: " + module.title} />)
+                            })
+                        :
+                         <Text>No hay modulos disponibles</Text> 
+                        }
+                            
+                            {/* <List.Item title="Modulo 1: Acordes" />
+                            <List.Item title="Modulo 1: Notas" /> */}
                         </List.Accordion>  
 
                     </Body>                        

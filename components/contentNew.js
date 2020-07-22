@@ -9,14 +9,7 @@ const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.7);
 const ITEM_HEIGHT = Math.round(ITEM_WIDTH * 3 / 4);
 
 function ContentNews({onPressFun}) {    
-    const [info, setInfo] = useState([
-        {title: "Guitarra Electrica", description: "Luis Sanchez", id: 1, create: "NUEVO"},
-        {title: "Bajo Nivel 1 Basico", description: "Luis Sanchez", id: 2, create: "ACTUALIZADO"},
-        {title: "Guitarra Electrica", description: "Luis Sanchez", id: 3, create: "NUEVO"},
-        {title: "Bajo Nivel 1 Basico", description: "Luis Sanchez", id: 4, create: "NUEVO"},
-        {title: "Guitarra Electrica", description: "Luis Sanchez", id: 5, create: "ACTUALIZADO"},
-        {title: "Bajo Nivel 1 Basico", description: "Luis Sanchez", id: 6, create: "NUEVO"},        
-    ])
+    const [info, setInfo] = useState([])
 
     useEffect(() => {
         fecthInfo()
@@ -26,10 +19,11 @@ function ContentNews({onPressFun}) {
         await axios
         .get('http://10.0.2.2:4000/getLastestCourses')
         .then(res => {
-            console.log("asdasd")
             console.log(res.data)
             if (res.data.response) {
                 setInfo(res.data.data)
+            }else{
+                console.log(res.data.response)
             }
         })
     }
@@ -38,17 +32,17 @@ function ContentNews({onPressFun}) {
         return (            
             <TouchableOpacity onPress={() => onPressFun(item)}>
                 <Card elevation={7} >
-                    <Card.Cover source={{ uri: 'https://image.winudf.com/v2/image1/Y29tLmx1eC5saXZlLndhbGxwYXBlcnMuYW5kLmNyZWF0aXZlLmZhY3Rvcnkud2FsbHBhcGVycy5iYWNrZ3JvdW5kcy5oZC5sd3AuZ3VpdGFyLmxpdmUud2FsbHBhcGVyX3NjcmVlbl8zXzE1NDk4NTgzNjRfMDQ5/screen-3.jpg?fakeurl=1&type=.jpg' }} />
+                    <Card.Cover source={{ uri: 'http://192.168.1.2:4000//coursesImages/' + item.course.mainImage}} />
                     {/* <Title style={item.create === "NUEVO" ? styles.titleCoverNuevo : styles.titleCover}>{item.create}</Title> */}
                     <Title style={true ? styles.titleCoverNuevo : styles.titleCover}>NUEVO</Title>
                     <Card.Title 
-                        title={item.title} 
-                        // subtitle={"Por: " + item.description} 
+                        title={item.course.title} 
+                        subtitle={"Por: " + item.userInfo.name} 
                         subtitleStyle={styles.subtitleCard}
                         right={() => {
                             return(
                                 <Text style={styles.priceText}>
-                                    {item.price ?item.price+"$" : "FREE" }
+                                    {item.course.price ?item.course.price+"$" : "FREE" }
                                 </Text>
                             )
                         }}
@@ -60,7 +54,10 @@ function ContentNews({onPressFun}) {
 
     return (
         <View style={styles.container}>
-            
+            <View style={styles.inside}>
+
+            {info 
+            ? 
             <Carousel
             //   ref={(c) => { this._carousel = c; }}
             layout={'default'}
@@ -69,7 +66,11 @@ function ContentNews({onPressFun}) {
               sliderWidth={SLIDER_WIDTH}
               itemWidth={ITEM_WIDTH}
             />
-
+            :
+            <Text style={styles.noContent}>No hay cursos recientes</Text>
+            }
+            
+            </View>
         </View>
     )
 }
@@ -78,7 +79,7 @@ const styles = StyleSheet.create({
     container: {
         // flex: 1,
         // backgroundColor: "coral",
-        height: 300,
+        // height: 300,
         marginVertical: 10,
         marginBottom: 0        
         // marginHorizontal: 20
@@ -122,7 +123,14 @@ const styles = StyleSheet.create({
         borderBottomRightRadius: 25,
         paddingLeft: 10
     },
-
+    inside:{
+        paddingVertical: 15
+    },
+    noContent: {
+        textAlign: "center",
+        fontSize: 20,
+        fontWeight: "bold"
+    }
 })
 
 

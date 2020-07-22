@@ -38,7 +38,7 @@ const ENTRIES1 = [
 ];
 const {width: screenWidth} = Dimensions.get('window');
 
-const MyCarousel = props => {
+const MyCarousel = (props) => {
   const [entries, setEntries] = useState(false);
   const carouselRef = useRef(null);
 
@@ -52,11 +52,14 @@ const MyCarousel = props => {
     }, 400)
   });
 
+  console.log("array")
+  console.log(props)
+
   const renderItem = ({item, index}, parallaxProps) => {
     return (
       <View style={styles.item}>
         <ParallaxImage
-          source={{uri: item.illustration}}
+          source={{uri: "http://192.168.1.2:4000//coursesImages/" + item.attachment}}
           containerStyle={styles.imageContainer}
           style={styles.image}
           parallaxFactor={0.4}
@@ -75,7 +78,7 @@ const MyCarousel = props => {
             sliderWidth={screenWidth}
             sliderHeight={screenWidth}
             itemWidth={screenWidth - 60}
-            data={ENTRIES1}
+            data={props.arrayImage}
             renderItem={renderItem}
             hasParallaxImages={true}
         /> 

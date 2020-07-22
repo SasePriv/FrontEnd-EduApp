@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { MaterialIcons } from '@expo/vector-icons'; 
 import Login from '../components/login'
 import HomeStack from '../routes/homeStack'
 import CoursesStack from '../routes/coursesStack'
@@ -24,9 +25,6 @@ export default function MyTabs() {
     } catch (error) {
       console.log(error)
     }
-
-    console.log("ver")
-    console.log(JSON.parse(dataAsync))
 
     if(dataAsync){
       setTypeOfUser(JSON.parse(dataAsync).typeOfUser)
@@ -77,8 +75,8 @@ export default function MyTabs() {
         options={{
           tabBarLabel: 'Añadir Cursos',
           // tabBarColor: '#009688',
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="book" color={color} size={27} />
+          tabBarIcon: ({ color }) => (            
+            <MaterialIcons name="library-add" color={color} size={27} />
           ),
         }}
       />
