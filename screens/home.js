@@ -9,61 +9,88 @@ import axios from 'axios'
 import { AuthContext } from '../components/context'
 
 const screenHeight = Dimensions.get("window").height
-let selected = ""
 let status = false
 
 function Home({navigation, openModal}) {
 
     const { signOut } = useContext(AuthContext)
 
-    const [attachmentSelectedCourse, setAttachmentSelectedCourse] = useState([])
-    const [namesModulosCourses, setNamesModulosCourses] = useState()
+    // const [attachmentSelectedCourse, setAttachmentSelectedCourse] = useState([])
+    // const [namesModulosCourses, setNamesModulosCourses] = useState()
 
-    function onPressFunction(informacion) {
+    const [selected, setSelected] = useState(null)
+
+    async function onPressFunction(informacion) {
         console.log(informacion)
-        fetchAttachmentCourse(informacion.course._id)
-        fetcGetNamesModulesOfCourse(informacion.course._id)
-        selected = {
-            dataSelectedCourse: informacion.course,
-            userInfo: informacion.userInfo,
-            attachmentSelectedCourse,
-            namesModulosCourses
-        }
-        status = true
-        openModal() 
-    }
-
-    const fetchAttachmentCourse = async (courseId) =>{
+        let attachmentSelectedCourse = null
+        let namesModulosCourses = null 
         const dataSend = new FormData();
-        dataSend.append('courseId', courseId)
+
+        dataSend.append('courseId', informacion.course._id)
 
         await axios
         .post('http://10.0.2.2:4000/getAttachmentsOfCourse', dataSend)
         .then(res => {
             // console.log(res.data)
             if (res.data.response) {
-                setAttachmentSelectedCourse(res.data.data)
+                attachmentSelectedCourse = res.data.data
             } else {
                 console.log(res.data.message)
             }
         })
-    }
-
-    const fetcGetNamesModulesOfCourse = async (courseId) =>{
-        const dataSend = new FormData();
-        dataSend.append('courseId', courseId)
 
         await axios
         .post('http://10.0.2.2:4000/getNamesModulesOfCourse', dataSend)
         .then(res => {
             // console.log(res.data)
             if (res.data.response) {
-                setNamesModulosCourses(res.data.data)
+                namesModulosCourses = res.data.data
             } else {
                 console.log(res.data.message)
             }
         })
+
+        setSelected({
+            dataSelectedCourse: informacion.course,
+            userInfo: informacion.userInfo,
+            attachmentSelectedCourse,
+            namesModulosCourses
+        })
+        status = true
+        openModal() 
     }
+
+    // const fetchAttachmentCourse = async (courseId) =>{
+    //     const dataSend = new FormData();
+    //     dataSend.append('courseId', courseId)
+
+    //     await axios
+    //     .post('http://10.0.2.2:4000/getAttachmentsOfCourse', dataSend)
+    //     .then(res => {
+    //         // console.log(res.data)
+    //         if (res.data.response) {
+    //             setAttachmentSelectedCourse(res.data.data)
+    //         } else {
+    //             console.log(res.data.message)
+    //         }
+    //     })
+    // }
+
+    // const fetcGetNamesModulesOfCourse = async (courseId) =>{
+    //     const dataSend = new FormData();
+    //     dataSend.append('courseId', courseId)
+
+    //     await axios
+    //     .post('http://10.0.2.2:4000/getNamesModulesOfCourse', dataSend)
+    //     .then(res => {
+    //         // console.log(res.data)
+    //         if (res.data.response) {
+    //             setNamesModulosCourses(res.data.data)
+    //         } else {
+    //             console.log(res.data.message)
+    //         }
+    //     })
+    // }
 
 
     const close = () => {

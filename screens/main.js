@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { MaterialIcons } from '@expo/vector-icons'; 
+import { Feather } from '@expo/vector-icons'; 
 import Login from '../components/login'
 import HomeStack from '../routes/homeStack'
 import CoursesStack from '../routes/coursesStack'
 import AddOptionStack from '../routes/addOptionStack'
+import AdminStack from '../routes/adminStack'
 import AsyncStorage from '@react-native-community/async-storage';
+
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -77,6 +80,23 @@ export default function MyTabs() {
           // tabBarColor: '#009688',
           tabBarIcon: ({ color }) => (            
             <MaterialIcons name="library-add" color={color} size={27} />
+          ),
+        }}
+      />
+      :
+      null
+      }
+
+      {typeOfUser == "admin" 
+      ? 
+      <Tab.Screen
+        name="Admin"
+        component={AdminStack}
+        options={{
+          tabBarLabel: 'Admin Panel',
+          // tabBarColor: '#009688',
+          tabBarIcon: ({ color }) => (                        
+            <Feather name="server" color={color} size={25} />
           ),
         }}
       />

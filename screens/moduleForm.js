@@ -13,7 +13,6 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons'; 
 import * as DocumentPicker from 'expo-document-picker';
 import axios from 'axios'
-import { set } from "react-native-reanimated";
 
 const SLIDER_WIDTH = Dimensions.get('window').width;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.7);
@@ -32,6 +31,16 @@ export default function ModuleForm({route, navigation}){
         documents: [],
         contadorImage: 0,
         contadorFiles: 0
+    });
+
+    const [editForm, setEditForm] = useState({
+        titleEdit: false,
+        contentEdit: false,
+        typeVideoEdit: false,
+        urlvideoEdit: false,
+        videoEdit: false,
+        infoEdit: false,
+        documentsEdit: false,
     });
 
     const [course_id, setCourse_id] = useState(null)
@@ -65,7 +74,6 @@ export default function ModuleForm({route, navigation}){
                 let arrayFile = [];
                 let contadorFile = 0
                 let arriveVideo = ""
-                console.log(res.data)
                 res.data.data.attachmentModule.forEach(element => {
                     if (element.type_of_Attachment == "image") {
                         // arrayImage = [...form.info, {uri: element.attachment, file:""}]
@@ -119,6 +127,13 @@ export default function ModuleForm({route, navigation}){
                 typeVideo: "url"
             })
         }
+
+        if (edit) {
+            setEditForm({
+                ...editForm,
+                typeVideoEdit: true
+            })
+        }
     } 
     
     const handleCheckUpload  = () => {
@@ -131,6 +146,14 @@ export default function ModuleForm({route, navigation}){
             setForm({
                 ...form,
                 typeVideo: "upload"
+            })
+        }
+
+        
+        if (edit) {
+            setEditForm({
+                ...editForm,
+                typeVideoEdit: true
             })
         }
     } 
@@ -146,8 +169,14 @@ export default function ModuleForm({route, navigation}){
           if (!result.cancelled) {            
              setForm({...form, video: result.uri})        
           }
-    
-          console.log(result);
+
+          if (edit) {
+            setEditForm({
+                ...editForm,
+                videoEdit: true
+            })
+        }
+
         } catch (E) {
           console.log(E);
         }
@@ -308,7 +337,6 @@ export default function ModuleForm({route, navigation}){
         })
         .then(res => {
             if (res.data.response) {
-                console.log(res.data)
                 setLoading(false)
 
                 fetchCourseData(course_id)
@@ -322,7 +350,36 @@ export default function ModuleForm({route, navigation}){
         })
 
     }
-    console.log(course_id)
+    
+    const handaleTitle  = (text) => {
+        setForm({...form, title: text})
+        if (edit) {
+            setEditForm({
+                ...editForm,
+                titleEdit: true
+            })
+        }
+    }
+
+    const handleContenido = (text) => {
+        setForm({...form, content: text})
+        if (edit) {
+            setEditForm({
+                ...editForm,
+                contentEdit: true
+            })
+        }
+    }
+
+    const handleUrlVideo = (text) => {
+        setForm({...form,urlvideo: text})
+        if (edit) {
+            setEditForm({
+                ...editForm,
+                urlvideoEdit: true
+            })
+        }
+    }
 
     if(loading){
         return(
@@ -360,7 +417,7 @@ export default function ModuleForm({route, navigation}){
                         <View style={styles.containerInput}>                    
                             <MaterialCommunityIcons style={styles.icon} name="format-title" size={24} color="#0080ff" />
                             <TextInput
-                                onChangeText={(text) => setForm({...form, title: text})}
+                                onChangeText={(text) => handaleTitle(text)}
                                 value={form.title}
                                 style={[styles.input]}                
                                 selectionColor="#0080ff"
@@ -373,11 +430,11 @@ export default function ModuleForm({route, navigation}){
                         <View style={styles.containerInput}>                                            
                             <MaterialIcons name="description" style={[styles.icon, styles.descriptionIcon]} size={24} color="#0080ff" />
                             <TextInput
-                                onChangeText={(text) => setForm({...form, content: text})}
+                                onChangeText={(text) => handleContenido(text)}
                                 value={form.content}
                                 style={[styles.input]}                
                                 selectionColor="#0080ff"
-                                placeholder="Correo"     
+                                placeholder="Contenido del Modulo"     
                                 multiline={true}
                                 numberOfLines={5}                           
                             />
@@ -405,7 +462,7 @@ export default function ModuleForm({route, navigation}){
                     <View style={styles.formGroup}>                          
                         <View style={[styles.containerInput]}>                                                                        
                             <TextInput
-                                onChangeText={text => setForm({...form,urlvideo: text})}
+                                onChangeText={text => handleUrlVideo(text)}
                                 value={form.urlvideo}
                                 style={[styles.input]}                
                                 selectionColor="#0080ff"
@@ -500,12 +557,22 @@ export default function ModuleForm({route, navigation}){
                         </View>
                     </View>
 
-                    <View style={[styles.formGroup, styles.btnVideo]}>       
+                    <View style={[styles.formGroup, styles.btnVideo]}> 
+                        {edit 
+                        ?
+                        <TouchableOpacity onPress={() => handleChangeEdit()} >
+                        <View style={[styles.cajaSave, styles.shadow]}>
+                            <Text style={styles.textSave}>Actualizar Modulos</Text>                 
+                        </View>       
+                        </TouchableOpacity>  
+                        :
                         <TouchableOpacity onPress={() => handleSubmit()} >
                         <View style={[styles.cajaSave, styles.shadow]}>
                             <Text style={styles.textSave}>Añadir Modulo</Text>                 
                         </View>       
-                        </TouchableOpacity>               
+                        </TouchableOpacity> 
+                        }
+              
                     </View>                           
                 </ScrollView>
             </Container>

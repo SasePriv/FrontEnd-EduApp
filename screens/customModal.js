@@ -53,13 +53,13 @@ function CustomModal({action, CloseModal, data, close}){
                         <ImageBackground 
                             style={{ flex: 1,}}  
                             // imageStyle={{ borderRadius: 10 }}
-                            source={{uri: 'http://192.168.1.2:4000//coursesImages/' + data.dataSelectedCourse?.mainImage}} />
+                            source={{uri: 'http://192.168.1.2:4000//coursesImages/' + data?.dataSelectedCourse?.mainImage}} />
                         <View style={styles.hoverImage}>
-                            <ModelTileBody>{data.dataSelectedCourse?.title}</ModelTileBody>
+                            <ModelTileBody>{data?.dataSelectedCourse?.title}</ModelTileBody>
                             <View style={styles.containerImage}>                                
-                                <Image resizeMode="cover" style={styles.contentContainer} source={{uri: 'http://192.168.1.2:4000//profileImages/' + data.userInfo?.profile_image}} />
+                                <Image resizeMode="cover" style={styles.contentContainer} source={{uri: 'http://192.168.1.2:4000//profileImages/' + data?.userInfo?.profile_image}} />
                             </View>
-                            <Text style={styles.descripCard}>Por: {data.userInfo?.name}</Text>     
+                            <Text style={styles.descripCard}>Por: {data?.userInfo?.name}</Text>     
                         </View>
                     </Header>     
 
@@ -75,7 +75,7 @@ function CustomModal({action, CloseModal, data, close}){
 
                     {/* Barra de Precio */}
                     <PriceBar>
-                        <PriceText style={styles.shadow}>PRECIO: {data.dataSelectedCourse?.price ?  data.dataSelectedCourse?.price + "$" : "FREE" }</PriceText>
+                        <PriceText style={styles.shadow}>PRECIO: {data?.dataSelectedCourse?.price ?  data?.dataSelectedCourse?.price + "$" : "FREE" }</PriceText>
                         <Icon.FontAwesome5 style={styles.cartIcon} name='shopping-cart' size={22} color='white' />
                         <TouchableOpacity>
                             <ButtonPay style={styles.shadow}>
@@ -89,19 +89,19 @@ function CustomModal({action, CloseModal, data, close}){
                     <Body>                        
                         <Text style={styles.subTitleImagenes}>Imagenes</Text>
                         <ParalaxImage 
-                            arrayImage={data.attachmentSelectedCourse}
+                            arrayImage={data?.attachmentSelectedCourse}
                         />
                         <Text style={styles.subTitleDescrip}>Descripcion</Text>
-                        <ModelDescripctionBody>{data.dataSelectedCourse?.description}</ModelDescripctionBody>
+                        <ModelDescripctionBody>{data?.dataSelectedCourse?.description}</ModelDescripctionBody>
                         <List.Accordion
                             title="Modulos"
                             left={props => <List.Icon {...props} icon="book-open" />}                        
                             raised theme={{ colors: {primary: '#0080ff'} }}
                             style={{marginTop: -10,}}
                         >
-                        {data.namesModulosCourses
+                        {data?.namesModulosCourses
                         ?
-                            data.namesModulosCourses.map(module => {
+                            data?.namesModulosCourses.map(module => {
                                 return (<List.Item title={"Modulo: " + module.title} />)
                             })
                         :

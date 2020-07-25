@@ -30,7 +30,7 @@ function ContentNews({onPressFun}) {
 
     const renderItem = ({item, index}) => {
         return (            
-            <TouchableOpacity onPress={() => onPressFun(item)}>
+            <TouchableOpacity onPress={() => onPressFun(item)} style={styles.caja}>
                 <Card elevation={7} >
                     <Card.Cover source={{ uri: 'http://192.168.1.2:4000//coursesImages/' + item.course.mainImage}} />
                     {/* <Title style={item.create === "NUEVO" ? styles.titleCoverNuevo : styles.titleCover}>{item.create}</Title> */}
@@ -80,13 +80,9 @@ const styles = StyleSheet.create({
         // flex: 1,
         // backgroundColor: "coral",
         // height: 300,
-        marginVertical: 10,
-        marginBottom: 0        
+        // marginVertical: 10,
+        marginBottom: 0,
         // marginHorizontal: 20
-    },
-    inside: {
-        // padding: 10
-        paddingHorizontal: 10
     },
     priceText:{
         fontSize: 25,
@@ -123,13 +119,13 @@ const styles = StyleSheet.create({
         borderBottomRightRadius: 25,
         paddingLeft: 10
     },
-    inside:{
-        paddingVertical: 15
-    },
     noContent: {
         textAlign: "center",
         fontSize: 20,
         fontWeight: "bold"
+    },
+    caja: {
+        padding: 10
     }
 })
 
