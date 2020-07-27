@@ -3,6 +3,7 @@ import { createStackNavigator, TransitionPresets, CardStyleInterpolators } from 
 import { StyleSheet } from 'react-native'
 import AdminPanel from '../screens/adminPanel'
 import TeacherPanel from '../screens/teacherPanel'
+import CategoryPanel from '../screens/categoryPanel'
 
 const Stack = createStackNavigator();
 
@@ -24,6 +25,7 @@ export default function AdminStack() {
                     }}
                 />
                 <Stack.Screen name="Teacher Panel" component={TeacherPanel}/>
+                <Stack.Screen name="Category Panel" component={CategoryPanel}/>
             </Stack.Navigator>
         )
 }

@@ -8,6 +8,10 @@ export default function AdminPanel({navigation}) {
         navigation.navigate("Teacher Panel")
     }
 
+    const handlePressCategory = () => {
+        navigation.navigate("Category Panel")
+    }
+
     return(
         <View>
             <TouchableOpacity onPress={handlePressTeachers}>
@@ -18,7 +22,7 @@ export default function AdminPanel({navigation}) {
             </View>
             </TouchableOpacity>
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={handlePressCategory}>
             <View style={[styles.cardBlue, styles.shadow, styles.cardWhite]}>
                 <Text style={[styles.subTitle, styles.blueText]}>Administrador</Text>
                 <Text style={[styles.subTitle, styles.blueText]}>de Categorias</Text>

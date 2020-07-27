@@ -16,7 +16,6 @@ export default function Curso({ route ,navigation }) {
     const [course_id, setCourse_Id] = useState("")
 
     useEffect(() => {
-        console.log( route.params)
         const { coursesId } =  route.params;
         setCourse_Id(coursesId)
         fetchCourseData(coursesId)        

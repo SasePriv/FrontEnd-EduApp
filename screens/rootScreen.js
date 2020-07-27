@@ -1,5 +1,5 @@
 import React, {useState, useContext} from 'react'
-import { StyleSheet, Text, View, Image, ScrollView, TextInput, Button } from 'react-native'
+import { StyleSheet, Text, View, Image, ScrollView, TextInput, Button, TouchableOpacity } from 'react-native'
 import { Switch } from 'react-native-paper';
 import { AntDesign } from '@expo/vector-icons'; 
 import axios from 'axios'
@@ -69,7 +69,15 @@ export default function RootScreen({navigation}) {
                         placeholder="Contraseña"                                
                     />
                 </View>
-                <Text style={styles.fogot}>Forgot Password?</Text>
+                {form.errorStatus
+                ?
+                    <Text style={styles.textError}>{form.errorMessage}</Text>
+                :
+                    null
+                }
+                <TouchableOpacity onPress={() => navigation.navigate('forgotPassword')}>
+                    <Text style={styles.fogot}>Forgot Password?</Text>
+                </TouchableOpacity>
                 <View style={styles.botones}>
                     <View style={styles.btn}>
                         <Button onPress={() => handleSubnmit(form.email, form.password)}  title="Iniciar Sesion"/>
@@ -150,5 +158,12 @@ const styles = StyleSheet.create({
     },
     botones: {
         marginTop: 15
+    },
+    textError:{
+        textAlign: "center",
+        color: "red",
+        fontSize: 15,
+        marginBottom: 5,
+        fontWeight: "bold"
     }
 })

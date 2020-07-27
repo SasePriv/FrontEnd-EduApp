@@ -99,13 +99,13 @@ function CustomModal({action, CloseModal, data, close}){
                             raised theme={{ colors: {primary: '#0080ff'} }}
                             style={{marginTop: -10,}}
                         >
-                        {data?.namesModulosCourses
+                        {Array.isArray(data?.namesModulosCourses) && data?.namesModulosCourses.length
                         ?
                             data?.namesModulosCourses.map(module => {
                                 return (<List.Item title={"Modulo: " + module.title} />)
                             })
                         :
-                         <Text>No hay modulos disponibles</Text> 
+                         <Text style={styles.noDisponible}>No hay modulos disponibles</Text> 
                         }
                             
                             {/* <List.Item title="Modulo 1: Acordes" />
@@ -217,6 +217,10 @@ const styles = StyleSheet.create({
         fontWeight: "normal",
         letterSpacing: 0.4   ,
         marginTop: 5
+    },
+    noDisponible: {
+        marginLeft: 10,
+        marginBottom: 10
     }
 })
 

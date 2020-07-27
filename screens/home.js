@@ -1,5 +1,5 @@
-import React, {useState,useContext} from 'react'
-import { StyleSheet, Text, View, ScrollView, Button, Dimensions } from 'react-native'
+import React, {useState,useContext, useEffect} from 'react'
+import { StyleSheet, Text, View, ScrollView, Button, Dimensions, RefreshControl } from 'react-native'
 import GridCategory from '../components/gridCategory'
 import ContentNew from '../components/contentNew'
 import CustomModal from './customModal'
@@ -11,14 +11,32 @@ import { AuthContext } from '../components/context'
 const screenHeight = Dimensions.get("window").height
 let status = false
 
+const wait = (timeout) => {
+    return new Promise(resolve => {
+        setTimeout(resolve, timeout);
+    });
+};
+  
+
 function Home({navigation, openModal}) {
 
-    const { signOut } = useContext(AuthContext)
+    const { signOut } = useContext(AuthContext);
 
-    // const [attachmentSelectedCourse, setAttachmentSelectedCourse] = useState([])
-    // const [namesModulosCourses, setNamesModulosCourses] = useState()
+    const [selected, setSelected] = useState(null);
 
-    const [selected, setSelected] = useState(null)
+    const [refreshing, setRefreshing] = useState(false);
+
+    const [dataCategory, setDataCategory] = useState(null);
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        fetchCategoryData();
+        wait(2000).then(() => setRefreshing(false));
+    }, []);
+
+    useEffect(() => {
+        fetchCategoryData()
+    },[])
 
     async function onPressFunction(informacion) {
         console.log(informacion)
@@ -60,38 +78,17 @@ function Home({navigation, openModal}) {
         openModal() 
     }
 
-    // const fetchAttachmentCourse = async (courseId) =>{
-    //     const dataSend = new FormData();
-    //     dataSend.append('courseId', courseId)
-
-    //     await axios
-    //     .post('http://10.0.2.2:4000/getAttachmentsOfCourse', dataSend)
-    //     .then(res => {
-    //         // console.log(res.data)
-    //         if (res.data.response) {
-    //             setAttachmentSelectedCourse(res.data.data)
-    //         } else {
-    //             console.log(res.data.message)
-    //         }
-    //     })
-    // }
-
-    // const fetcGetNamesModulesOfCourse = async (courseId) =>{
-    //     const dataSend = new FormData();
-    //     dataSend.append('courseId', courseId)
-
-    //     await axios
-    //     .post('http://10.0.2.2:4000/getNamesModulesOfCourse', dataSend)
-    //     .then(res => {
-    //         // console.log(res.data)
-    //         if (res.data.response) {
-    //             setNamesModulosCourses(res.data.data)
-    //         } else {
-    //             console.log(res.data.message)
-    //         }
-    //     })
-    // }
-
+    const fetchCategoryData = async() =>{
+        await axios
+        .get('http://10.0.2.2:4000/getAllCategory')
+        .then(res => {
+            if (res.data.response) {          
+                setDataCategory(res.data.data)
+            } else {
+                setDataCategory(null)
+            }
+        })
+    }
 
     const close = () => {
         status = false
@@ -103,7 +100,11 @@ function Home({navigation, openModal}) {
                 data={selected}
                 close={close}
             />
-            <ScrollView>
+            <ScrollView
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                 }
+            >
                 <View style={{alignContent:"center", alignItems: "center", padding: 5}}>
                     <Button onPress={() => signOut()} title="logout-test" />
                 </View>
@@ -111,7 +112,7 @@ function Home({navigation, openModal}) {
                 <ContentNew 
                    onPressFun={onPressFunction}/>
                 <Text style={styles.subTitleCate}>Categorias</Text>
-                <GridCategory naviga={navigation} />
+                <GridCategory naviga={navigation} dataCategory={dataCategory}/>
             </ScrollView>
         </View>
     )

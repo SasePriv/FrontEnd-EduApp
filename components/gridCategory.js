@@ -1,39 +1,45 @@
-import React, { useState }  from 'react'
+import React, { useState, useEffect }  from 'react'
 import { StyleSheet, Text, View, ImageBackground, TouchableOpacity } from 'react-native'
 import { FlatGrid } from 'react-native-super-grid';
+import axios from 'axios'
 
-export default function GridCategory( {naviga} ) {
-    const [info, setInfo] = useState([
-        {image: require('../assets/img/guitarra.jpg'), type: "Guitarra"},
-        {image: require('../assets/img/gelectrica.jpg'), type: "Guitarra Elect."},
-        {image: require('../assets/img/bajo.jpg') , type: "Bajo"},
-        {image: require('../assets/img/bateria.jpg'), type: "Bateria"},
-        {image: require('../assets/img/piano.jpg'), type: "Piano"},
-        {image: require('../assets/img/saxofon.jpeg'), type: "Saxofon"},
-        {image: require('../assets/img/saxofon.jpeg'), type: "Saxofon"},
-    ])
+export default function GridCategory( {naviga, dataCategory} ) {
+    const [info, setInfo] = useState(null)
 
-    const onPress = () => { 
-        naviga.navigate('Category')
+    useEffect(() => {
+        if (dataCategory) {
+            setInfo(dataCategory)
+        }
+    })
+
+    const onPress = (title) => { 
+        naviga.navigate('Category',{category: title});
     }
 
     return(
+        <View>
+
+        {info 
+        ? 
         <FlatGrid
             itemDimension={120}
             data={info}
             renderItem={({ item }) => (
-                <TouchableOpacity onPress={onPress} style={styles.appButtonContainer}>                    
+                <TouchableOpacity onPress={() => onPress(item.title)} style={styles.appButtonContainer}>                    
                     <ImageBackground 
                         style={styles.boxOne}  
                         imageStyle={{ borderTopLeftRadius: 10, borderTopRightRadius: 10, borderColor: "#0080ff",
                         borderWidth: 1}}
-                        source={item.image} 
+                        source={{uri: 'http://192.168.1.2:4000//categoryImages/' + item.mainImage}} 
                     />                    
-                    <Text style={styles.text}>{item.type}</Text>
+                    <Text style={styles.text}>{item.title}</Text>
                 </TouchableOpacity>
             )}
         />
-
+        :
+        null
+        }
+        </View>
     )
 }
 

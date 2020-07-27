@@ -1,38 +1,80 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import { StyleSheet, Text, View, TouchableOpacity, FlatList, ScrollView } from 'react-native'
 import { connect } from "react-redux"
 import CustomModal from './customModal'
 import { Searchbar , Card} from 'react-native-paper';
+import axios from 'axios'
 
-let selected = ""
+// let selected = ""
 let status = false
 
-function CoursesCategory({openModal, action}) {
-    const [textSearch, setTextSearch] = useState("")
+function CoursesCategory({openModal, action, route ,navigation }) {
+    const [textSearch, setTextSearch] = useState("");
 
-    const info =[
-        {
-            id: 1,
-            title: "Guitarra Acustica Basico",
-            descrip: "Elisa Fernandez",
-            uri: 'https://image.winudf.com/v2/image1/Y29tLmx1eC5saXZlLndhbGxwYXBlcnMuYW5kLmNyZWF0aXZlLmZhY3Rvcnkud2FsbHBhcGVycy5iYWNrZ3JvdW5kcy5oZC5sd3AuZ3VpdGFyLmxpdmUud2FsbHBhcGVyX3NjcmVlbl8zXzE1NDk4NTgzNjRfMDQ5/screen-3.jpg?fakeurl=1&type=.jpg'   
-        },
-        {
-            id: 2,
-            title: "Bajo Nivel Basico",
-            descrip: "Fernando",
-            uri: 'https://image.winudf.com/v2/image1/Y29tLmx1eC5saXZlLndhbGxwYXBlcnMuYW5kLmNyZWF0aXZlLmZhY3Rvcnkud2FsbHBhcGVycy5iYWNrZ3JvdW5kcy5oZC5sd3AuZ3VpdGFyLmxpdmUud2FsbHBhcGVyX3NjcmVlbl8zXzE1NDk4NTgzNjRfMDQ5/screen-3.jpg?fakeurl=1&type=.jpg'   
-        },
-        {
-            id: 3,
-            title: "Bajo Nivel Basico",
-            descrip: "Fernando",
-            uri: 'https://picsum.photos/700'   
-        }
-    ]
+    const [categoryTitle, setCategoryTitle] = useState("");
 
-    function onPressFunction(informacion) {
-        selected = informacion
+    const [info, setInfo] = useState(null);
+
+    const [selected, setSelected] = useState(null)
+
+    useEffect(() => {
+        const { category } = route.params;
+        setCategoryTitle(category);
+        fetchCategoryData(category)
+    },[])
+
+    const fetchCategoryData = async (category) => {
+
+        const dataSend = new FormData();
+        dataSend.append('categoryTitle', category);
+
+        await axios
+        .post('http://10.0.2.2:4000/getAllCoursesOfCategory', dataSend)
+        .then(res => {
+            if (res.data.response) {
+                setInfo(res.data.data)
+            } else {
+                setInfo(null)
+            }
+        })
+
+    }
+
+    async function onPressFunction(informacion) {
+        let attachmentSelectedCourse = null
+        let namesModulosCourses = null 
+        const dataSend = new FormData();
+
+        dataSend.append('courseId', informacion.course._id)
+
+        await axios
+        .post('http://10.0.2.2:4000/getAttachmentsOfCourse', dataSend)
+        .then(res => {
+            // console.log(res.data)
+            if (res.data.response) {
+                attachmentSelectedCourse = res.data.data
+            } else {
+                console.log(res.data.message)
+            }
+        })
+
+        await axios
+        .post('http://10.0.2.2:4000/getNamesModulesOfCourse', dataSend)
+        .then(res => {
+            console.log(res.data)
+            if (res.data.response) {
+                namesModulosCourses = res.data.data
+            } else {
+                console.log(res.data.message)
+            }
+        })
+
+        setSelected({
+            dataSelectedCourse: informacion.course,
+            userInfo: informacion.userInfo,
+            attachmentSelectedCourse,
+            namesModulosCourses
+        })
         status = true
         openModal() 
     }
@@ -63,10 +105,13 @@ function CoursesCategory({openModal, action}) {
                 />
                 }
 
+            {info 
+            ? 
             <FlatList
                 data={info}
-                keyExtractor={item => item.id}
-                renderItem={ ({item}) => 
+                keyExtractor={item => item._id}
+                renderItem={ ({item}) => {
+                    return(
                     <TouchableOpacity onPress={() => onPressFunction(item)}>
                         <View style={styles.containerCard}>
                             <Card 
@@ -74,21 +119,21 @@ function CoursesCategory({openModal, action}) {
                                 style={styles.card}                            
                             >
                                 <Card.Title 
-                                    title={item.title.toUpperCase()}
+                                    title={item.course?.title.toUpperCase()}
                                     style={{backgroundColor: "#0080ff", borderTopLeftRadius: 10, borderTopRightRadius: 10}}
                                     titleStyle={{color: "white", fontWeight: "bold"}}                                 
                                     right={() => {
                                         return(
                                             <Text style={styles.priceText}>
-                                                40$
+                                                {item.course?.price ? item.course.price + "$" : "FREE"}
                                             </Text>
                                         )
                                     }}
                                 />
-                                <Card.Cover source={{ uri: 'https://image.winudf.com/v2/image1/Y29tLmx1eC5saXZlLndhbGxwYXBlcnMuYW5kLmNyZWF0aXZlLmZhY3Rvcnkud2FsbHBhcGVycy5iYWNrZ3JvdW5kcy5oZC5sd3AuZ3VpdGFyLmxpdmUud2FsbHBhcGVyX3NjcmVlbl8zXzE1NDk4NTgzNjRfMDQ5/screen-3.jpg?fakeurl=1&type=.jpg' }} />
-                                <Text style={styles.descripCardText}>Horas 120h - Guitarra</Text>    
-                                <Text style={styles.contentDescrip}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In fermentum accumsan viverra. Aliquam ornare pellentesque malesuada. Sed ut neque eu urna sagittis pellentesque eu ut sapien. Suspendisse laoreet semper dolor at ultrices. In hac habitasse platea dictumst. Mauris lacinia neque vel turpis consectetur, at aliquet nibh rutrum ...</Text>
-                                <Text style={styles.descripCard}>Por: Luis Sanchez</Text>                                
+                                <Card.Cover source={{ uri: 'http://192.168.1.2:4000//coursesImages/' + item.course?.mainImage }} />
+                                <Text style={styles.descripCardText}>Horas {item.course?.hours}h - {item.course?.category}</Text>    
+                                <Text style={styles.contentDescrip}>{item.course?.description.slice(0, 250)+"..."}</Text>
+                                <Text style={styles.descripCard}>Por: {item.userInfo?.name}</Text>                                
                                 {/* <Card.Title 
                                     title={item.title} 
                                     subtitle={"Por: "+item.descrip} 
@@ -103,9 +148,15 @@ function CoursesCategory({openModal, action}) {
                                 /> */}
                             </Card>
                         </View>
-                    </TouchableOpacity>                                         
+                    </TouchableOpacity>
+                    )
+                    }                                         
                 }
             />
+
+            :
+            <Text>asdas</Text>
+            }
         </View>
     )
 }
