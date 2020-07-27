@@ -9,6 +9,7 @@ import CoursesStack from '../routes/coursesStack'
 import AddOptionStack from '../routes/addOptionStack'
 import AdminStack from '../routes/adminStack'
 import AsyncStorage from '@react-native-community/async-storage';
+import ProfileStack from '../routes/profileStack'
 
 
 const Tab = createMaterialBottomTabNavigator();
@@ -117,7 +118,7 @@ export default function MyTabs() {
       />
       <Tab.Screen
         name="Profile"
-        component={Login}
+        component={ProfileStack}
         options={{
           tabBarLabel: 'Profile',
           // tabBarColor: '#607D8B',

@@ -6,8 +6,6 @@ import CustomModal from './customModal'
 import { connect } from "react-redux"
 import axios from 'axios'
 
-import { AuthContext } from '../components/context'
-
 const screenHeight = Dimensions.get("window").height
 let status = false
 
@@ -19,8 +17,6 @@ const wait = (timeout) => {
   
 
 function Home({navigation, openModal}) {
-
-    const { signOut } = useContext(AuthContext);
 
     const [selected, setSelected] = useState(null);
 
@@ -105,9 +101,6 @@ function Home({navigation, openModal}) {
                     <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                  }
             >
-                <View style={{alignContent:"center", alignItems: "center", padding: 5}}>
-                    <Button onPress={() => signOut()} title="logout-test" />
-                </View>
                 <Text style={styles.subTitle}>Nuevo</Text>
                 <ContentNew 
                    onPressFun={onPressFunction}/>
