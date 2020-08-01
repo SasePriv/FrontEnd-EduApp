@@ -1,14 +1,51 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity } from 'react-native'
 import { Divider } from 'react-native-paper';
 import {AntDesign} from "@expo/vector-icons"
+import axios from 'axios'
+import { FlatList } from 'react-native-gesture-handler';
 
 const ejemplo = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In fermentum accumsan viverra. Aliquam ornare pellentesque malesuada. Sed ut neque eu urna sagittis pellentesque eu ut sapien. Suspendisse laoreet semper dolor at ultrices. In hac habitasse platea dictumst. Mauris lacinia neque vel turpis consectetur, at aliquet nibh rutrum"
 
-export default function Curso({ navigation }) {
+export default function Curso({route, navigation }) {
 
-    const onPress = () => {
-        navigation.navigate('Lesson')
+    const [courseData, setCourseData] = useState(null);
+    const [modules, setModules] = useState(null)
+
+    useEffect(() => {
+        const { dataCourse } = route.params;
+        setCourseData(dataCourse);
+        const courseId = dataCourse.course._id;
+        fecthAllModulos(courseId)
+    },[])
+
+    const fecthAllModulos = async (courseId) => {
+        const dataSend = new FormData();
+        dataSend.append('coursesId', courseId);
+
+        await axios
+        .post('http://192.168.1.4:4000/getAllModulesOfCourse', dataSend)
+        .then(res => {
+            console.log("Moduel",res.data)
+            if (res.data.response) {
+                setModules(res.data.data)
+            } else {
+                setModules(null)
+                console.log("No hay modulos")
+            }
+        })
+    }
+
+    console.log("Modulitos",modules)
+
+    const onPress = (item) => {
+        navigation.navigate('Lesson', {module: item})
+    }
+
+    const getYearOfDate =  (time) =>{
+        const data = new Date(time);
+        const year = data.getFullYear();
+        return year;
     }
 
     return(
@@ -18,42 +55,34 @@ export default function Curso({ navigation }) {
                 <Image 
                     resizeMode="cover" 
                     style={styles.imageMain} 
-                    source={{uri: 'https://picsum.photos/700'}} 
+                    source={{uri: 'http://192.168.1.4:4000//coursesImages/' + courseData?.course?.mainImage}} 
                 />
                 <View style={styles.hoverBack}>
                     <View style={styles.containerImage}>                                
-                        <Image resizeMode="cover" style={styles.contentContainer} source={{uri: 'https://www.webconsultas.com/sites/default/files/styles/wc_adaptive_image__small/public/articulos/perfil-resilencia.jpg'}} />
+                        <Image resizeMode="cover" style={styles.contentContainer} source={{uri: 'http://192.168.1.4:4000//profileImages/' + courseData?.userInfo?.profile_image}} />
                     </View>
                     <Text style={[styles.descripCard, styles.other]}>{"Profesor".toUpperCase()}</Text> 
-                    <Text style={styles.descripCard}>Luis Sanchez</Text>       
+                    <Text style={styles.descripCard}>{courseData?.userInfo?.name}</Text>       
                 </View>
                 <View style={{flex: 1, backgroundColor:"white", borderRadius: 10}}>
-                    <Text style={styles.titleCurso}>Guitarra Acustica Basico Nivel 1</Text>    
-                    <Text style={styles.contentInfo}>Horas: 120h</Text>
-                    <Text style={styles.contentInfo}>Fecha: 2020</Text>
-                    <Text style={[styles.contentInfo, styles.readDescrip]}>{ejemplo.slice(0, 100)+"..."}</Text>                   
-                    <Text style={[styles.contentInfo, styles.viewMore]}>Ver Mas</Text>
+                    <Text style={styles.titleCurso}>{courseData?.course?.title}</Text>    
+                    <Text style={styles.contentInfo}>Horas: {courseData?.course?.hours}h</Text>
+                    <Text style={styles.contentInfo}>Fecha: {getYearOfDate(courseData?.course?.createdAt)}</Text>
+                    <Text style={[styles.contentInfo, styles.readDescrip]}>{courseData?.course?.description.slice(0, 200)+"..."}</Text>                   
+                    {/* <Text style={[styles.contentInfo, styles.viewMore]}>Ver Mas</Text> */}
                 </View>                
             </View>    
-            <Text style={[styles.boxTitle, styles.shadow]}>MODULOS</Text>            
-                <View style={{alignItems: "center"}}>                    
-                    <TouchableOpacity onPress={onPress} style={[styles.moduloContainer, styles.shadow]}>
-                        <Text style={styles.modulo}>MODULO 1: Teclas</Text>                    
-                        <AntDesign style={styles.icon} name='book' size={30} color='#0080ff' />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={onPress} style={[styles.moduloContainer, styles.shadow]}>
-                        <Text style={styles.modulo}>MODULO 2: Acordes</Text>                    
-                        <AntDesign style={styles.icon} name='book' size={30} color='#0080ff' />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={onPress} style={[styles.moduloContainer, styles.shadow]}>
-                        <Text style={styles.modulo}>MODULO 3: Teoria</Text>                    
-                        <AntDesign style={styles.icon} name='book' size={30} color='#0080ff' />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={onPress} style={[styles.moduloContainer, styles.shadow]}>
-                        <Text style={styles.modulo}>MODULO 4: Tecnicas</Text>                    
-                        <AntDesign style={styles.icon} name='book' size={30} color='#0080ff' />
-                    </TouchableOpacity>
-                </View>                     
+            <Text style={[styles.boxTitle, styles.shadow]}>MODULOS</Text>                              
+                    <FlatList 
+                        data={modules}
+                        keyExtractor={item => item._id}
+                        renderItem={ ({item, index}) =>                                                
+                        <TouchableOpacity onPress={() => onPress(item)} style={[styles.moduloContainer, styles.shadow]}>
+                            <Text style={styles.modulo}>MODULO {index + 1}: {item.title}</Text>                    
+                            <AntDesign style={styles.icon} name='book' size={30} color='#0080ff' />
+                        </TouchableOpacity>                                     
+                        }
+                    />                              
         </View> 
         </ScrollView>      
     )
@@ -152,15 +181,16 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         padding: 10,
         borderRadius: 10,  
-        marginBottom: 5      
+        marginBottom: 5
     },
     moduloContainer: {
-        width: "95%",
+        width: "98%",
         backgroundColor: "white",
         borderRadius: 5,
         marginBottom: 1,
         flexDirection: "row",
-        justifyContent: "space-between",        
+        justifyContent: "space-between",   
+        margin: 2,        
     },
     modulo: {
         padding: 15,

@@ -7,8 +7,6 @@ import { FontAwesome } from '@expo/vector-icons';
 import axios from 'axios'
 import { HeaderBackButton } from '@react-navigation/stack'; 
 
-const ejemplo = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In fermentum accasdasiopdasdioashduiasgduiashduiASHduasdh hsduiahdu umsan viverra. Aliquam ornare pellentesque malesuada. Sed ut neque eu urna sagittis pellentesque eu ut sapien. Suspendisse laoreet semper dolor at ultrices. In hac habitasse platea dictumst. Mauris lacinia neque vel turpis consectetur, at aliquet nibh rutrum"
-
 export default function Curso({ route ,navigation }) {
 
     const [dataInfo, setDataInfo] = useState({})

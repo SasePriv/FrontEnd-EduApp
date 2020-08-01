@@ -8,25 +8,14 @@ const SLIDER_WIDTH = Dimensions.get('window').width;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.7);
 const ITEM_HEIGHT = Math.round(ITEM_WIDTH * 3 / 4);
 
-function ContentNews({onPressFun}) {    
-    const [info, setInfo] = useState([])
+function ContentNews({onPressFun, dataLastCourses}) {    
+    const [info, setInfo] = useState(null)
 
     useEffect(() => {
-        fecthInfo()
-    },[])
-
-    const fecthInfo = async() => {
-        await axios
-        .get('http://10.0.2.2:4000/getLastestCourses')
-        .then(res => {
-            console.log(res.data)
-            if (res.data.response) {
-                setInfo(res.data.data)
-            }else{
-                console.log(res.data.response)
-            }
-        })
-    }
+        if (dataLastCourses) {
+            setInfo(dataLastCourses)
+        }
+    })
 
     const renderItem = ({item, index}) => {
         return (            

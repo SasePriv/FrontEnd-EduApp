@@ -97,11 +97,11 @@ export default function CategoryPanel() {
                         "Error al añadir una categoria",
                         res.data.message,
                         [
-                          {
-                            text: "Cancelar",
-                            onPress: () => console.log("Cancelar presionado"),
-                            style: "cancel"
-                          },
+                        //   {
+                        //     text: "Cancelar",
+                        //     onPress: () => console.log("Cancelar presionado"),
+                        //     style: "cancel"
+                        //   },
                           { text: "OK", onPress: () => console.log("OK presionado") }
                         ],
                         { cancelable: false }

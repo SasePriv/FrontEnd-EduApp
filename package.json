@@ -44,6 +44,7 @@
     "redux": "^4.0.5",
     "styled-components": "^5.1.1"
   },
+  "proxy": "http://192.168.1.4:4000/",
   "devDependencies": {
     "babel-preset-expo": "~8.1.0",
     "@babel/core": "^7.8.6"

@@ -1,10 +1,12 @@
 import React, {useState,useContext, useEffect} from 'react'
-import { StyleSheet, Text, View, ScrollView, Button, Dimensions, RefreshControl } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Button, Dimensions, RefreshControl, Alert } from 'react-native'
 import GridCategory from '../components/gridCategory'
 import ContentNew from '../components/contentNew'
 import CustomModal from './customModal'
 import { connect } from "react-redux"
 import axios from 'axios'
+import AsyncStorage from '@react-native-community/async-storage';
+
 
 const screenHeight = Dimensions.get("window").height
 let status = false
@@ -24,15 +26,35 @@ function Home({navigation, openModal}) {
 
     const [dataCategory, setDataCategory] = useState(null);
 
+    const [lastestCourses, setLastestCourses] = useState(null)
+
+    const [userId, setUserId] = useState(null)
+
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         fetchCategoryData();
+        fecthLastCourses();
         wait(2000).then(() => setRefreshing(false));
     }, []);
 
     useEffect(() => {
         fetchCategoryData()
+        fecthLastCourses()
+        handleAsync()
     },[])
+
+    const handleAsync  = async() => {
+        let dataAsync;
+        try {
+            dataAsync = await AsyncStorage.getItem('userData')
+        } catch (error) {
+            console.log(error)
+        }
+
+        if(dataAsync){
+            setUserId(JSON.parse(dataAsync)._id)
+        }
+    }
 
     async function onPressFunction(informacion) {
         console.log(informacion)
@@ -86,6 +108,50 @@ function Home({navigation, openModal}) {
         })
     }
 
+    const fecthLastCourses = async() => {
+        await axios
+        .get('http://10.0.2.2:4000/getLastestCourses')
+        .then(res => {
+            console.log(res.data)
+            if (res.data.response) {
+                setLastestCourses(res.data.data)
+            }else{
+                setLastestCourses(null)
+            }
+        })
+    }
+
+    const getFreeCourse = async(course) => {
+        const dataSend = new FormData();
+        dataSend.append('user_Id', userId);
+        dataSend.append('coursesId', course._id);
+        dataSend.append('typeService', course.typeService);
+
+        await axios
+        .post('http://10.0.2.2:4000/acquireCourse', dataSend)
+        .then(res => {
+            if (res.data.response) {
+                Alert.alert(
+                    "Realizado",
+                    "El curso se ha añadido a su libreria",
+                    [
+                      { text: "OK", onPress: () => console.log("OK presionado") }
+                    ],
+                    { cancelable: false }
+                );
+            } else {
+                Alert.alert(
+                    "Error",
+                    res.data.message,
+                    [
+                      { text: "OK", onPress: () => console.log("OK presionado") }
+                    ],
+                    { cancelable: false }
+                );
+            }
+        })
+    }
+
     const close = () => {
         status = false
     }
@@ -95,6 +161,7 @@ function Home({navigation, openModal}) {
             <CustomModal 
                 data={selected}
                 close={close}
+                getFreeCourse={getFreeCourse}
             />
             <ScrollView
                 refreshControl={
@@ -103,7 +170,9 @@ function Home({navigation, openModal}) {
             >
                 <Text style={styles.subTitle}>Nuevo</Text>
                 <ContentNew 
-                   onPressFun={onPressFunction}/>
+                    onPressFun={onPressFunction}
+                    dataLastCourses={lastestCourses}
+                />
                 <Text style={styles.subTitleCate}>Categorias</Text>
                 <GridCategory naviga={navigation} dataCategory={dataCategory}/>
             </ScrollView>

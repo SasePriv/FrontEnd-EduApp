@@ -1,20 +1,49 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, ScrollView } from 'react-native'
 import { Video } from 'expo-av'
 import * as ScreenOrientation  from 'expo-screen-orientation';
 import Accordian from '../components/accordian'
 import {AntDesign} from "@expo/vector-icons"
 import {SingleImage} from 'react-native-zoom-lightbox';
+import axios from 'axios'
 
-const ejemplo = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In fermentum accumsan viverra. Aliquam ornare pellentesque malesuada. Sed ut neque eu urna sagittis pellentesque eu ut sapien. Suspendisse laoreet semper dolor at ultrices. In hac habitasse platea dictumst. Mauris lacinia neque vel turpis consectetur, at aliquet nibh rutrum. Suspendisse vitae fringilla tellus. Integer molestie non dolor id congue. Donec aliquet sem odio, quis maximus tellus convallis quis. Mauris vitae nibh vulputate, lacinia sem eu, rhoncus urna. Pellentesque efficitur, turpis quis hendrerit commodo, ante risus commodo lectus, vel sagittis lectus enim at erat. Mauris eu nibh sit amet orci egestas tempor. Pellentesque malesuada purus vitae orci egestas, ut blandit ex faucibus."
+const principalUri = 'http://192.168.1.4:4000'
 
-export default function Lesson() {
+export default function Lesson({route}) {
 
     const [orientationIsLandscape, setOrientationIsLandscape] = useState(false);
+    const [dataLesson, setDataLesson] = useState(null)
+    const [dataAttachtment, setDataAttachtment] = useState([]) ;
+
+    useEffect(() => {
+        const { module } = route.params;
+        setDataLesson(module);
+        fecthAttachmentModule(module._id)
+    },[])
+
+    const fecthAttachmentModule = async (moduleId) => {
+        const dataSend = new FormData();
+        dataSend.append('moduleId', moduleId);
+
+        await axios
+        .post(principalUri + '/getAttachmentsOfModule', dataSend)
+        .then(res => {
+            if (res.data.response) {
+                setDataAttachtment(res.data.data)
+            } else {
+                setDataAttachtment(null)
+            }
+        })        
+    }
+
+    console.log('lessons', dataLesson)
 
     return(
         <ScrollView>
             <View style={styles.videoContainer}>
+
+                {dataLesson
+                ?
                 <Video
                     onFullscreenUpdate={async () => {
                         await ScreenOrientation.lockAsync(
@@ -23,7 +52,7 @@ export default function Lesson() {
                     );
                     setOrientationIsLandscape(!orientationIsLandscape);
                     }}
-                    source={{ uri: 'http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4' }}
+                    source={{ uri: principalUri + '//moduleVideos/' + dataLesson?.attachmentVideo}}
                     rate={1.0}
                     volume={1.0}
                     isMuted={false}
@@ -34,6 +63,10 @@ export default function Lesson() {
                     useNativeControls
                     style={{ width: "100%", height: 300 }}
                 />
+                :
+                null
+                }
+
             </View>
             <View style={{padding: 5}}>
                 {/* <List.AccordionGroup>
@@ -51,7 +84,7 @@ export default function Lesson() {
                 <Accordian 
                     title={"Descripcion".toUpperCase()}
                     data={() =>                         
-                        <Text>{ejemplo}</Text>                            
+                        <Text>{dataLesson?.contentText}</Text>                            
                     }
                 />
                 <Accordian 
@@ -73,18 +106,17 @@ export default function Lesson() {
                     title={"Imagenes".toUpperCase()}
                     data={() => 
                         <View style={{flexDirection: "row"}}>
-                            <SingleImage 
-                                uri='https://picsum.photos/700'
-                                style={{width: 100, height: 100, marginHorizontal: 8}} 
-                            />
-                            <SingleImage 
-                                uri='https://picsum.photos/700'
-                                style={{width: 100, height: 100, marginHorizontal: 8}} 
-                            />
-                            <SingleImage 
-                                uri='https://picsum.photos/700'
-                                style={{width: 100, height: 100, marginHorizontal: 8}} 
-                            />
+
+                            {dataAttachtment?.map(item => {
+                                if(item?.type_of_Attachment == "image"){
+                                    return(
+                                        <SingleImage 
+                                            uri={principalUri + '/moduleImages/' +item?.attachment}
+                                            style={{width: 100, height: 100, marginHorizontal: 8}} 
+                                        />
+                                    )    
+                                }
+                            })}
                         </View>}
                 />
             </View>

@@ -9,7 +9,7 @@ import { $CombinedState } from "redux"
 
 const screenHeight = Dimensions.get("window").height
 
-function CustomModal({action, CloseModal, data, close}){
+function CustomModal({action, CloseModal, data, close, getFreeCourse}){
 
     const [top, setTop] = useState(new Animated.Value(screenHeight));
     const [expanded, setExpanded] = useState(true);
@@ -42,6 +42,14 @@ function CustomModal({action, CloseModal, data, close}){
         CloseModal()
     }
 
+    const handleAcquiere = (course) => {
+        if (course.dataSelectedCourse.typeService == "free") {
+            getFreeCourse(course.dataSelectedCourse)
+        }else{
+            console.log("hola")
+        }
+    }
+ 
     console.log(data)
 
     return(
@@ -77,7 +85,7 @@ function CustomModal({action, CloseModal, data, close}){
                     <PriceBar>
                         <PriceText style={styles.shadow}>PRECIO: {data?.dataSelectedCourse?.price ?  data?.dataSelectedCourse?.price + "$" : "FREE" }</PriceText>
                         <Icon.FontAwesome5 style={styles.cartIcon} name='shopping-cart' size={22} color='white' />
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={() => handleAcquiere(data)}>
                             <ButtonPay style={styles.shadow}>
                                 <PriceButton>GET</PriceButton>
                             </ButtonPay>      
@@ -101,8 +109,8 @@ function CustomModal({action, CloseModal, data, close}){
                         >
                         {Array.isArray(data?.namesModulosCourses) && data?.namesModulosCourses.length
                         ?
-                            data?.namesModulosCourses.map(module => {
-                                return (<List.Item title={"Modulo: " + module.title} />)
+                            data?.namesModulosCourses.map((module, index) => {
+                                return (<List.Item key={index} title={"Modulo: " + module.title} />)
                             })
                         :
                          <Text style={styles.noDisponible}>No hay modulos disponibles</Text> 

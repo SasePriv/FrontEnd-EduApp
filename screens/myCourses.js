@@ -1,34 +1,67 @@
-import React, {useState} from 'react'
-import { StyleSheet, View, FlatList, TouchableOpacity, Image, Text } from 'react-native'
+import React, {useState, useEffect} from 'react'
+import { StyleSheet, View, FlatList, TouchableOpacity, Image, Text, RefreshControl } from 'react-native'
 import { Searchbar , Card, Title, Subheading } from 'react-native-paper';
+import axios from 'axios'
+import AsyncStorage from '@react-native-community/async-storage';
+
+const wait = (timeout) => {
+    return new Promise(resolve => {
+        setTimeout(resolve, timeout);
+    });
+};
 
 export default function MyCourses({navigation}) {
 
     const [textSearch, setTextSearch] = useState("")
+    const [userId, setUserId] = useState(null)
+    const [refreshing, setRefreshing] = useState(false);
 
-    const info =[
-        {
-            id: 1,
-            title: "Guitarra Acustica Basico",
-            descrip: "Luis Sanchez",
-            uri: 'https://picsum.photos/700'   
-        },
-        {
-            id: 2,
-            title: "Bajo Nivel Basico",
-            descrip: "Fernando",
-            uri: 'https://picsum.photos/700'   
-        },
-        {
-            id: 3,
-            title: "Bajo Nivel Basico",
-            descrip: "Fernando",
-            uri: 'https://picsum.photos/700'   
+    const [info, setInfo] = useState(null)
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true);
+        handleAsync();
+        wait(2000).then(() => setRefreshing(false));
+    }, []);
+
+    useEffect(() => {
+        handleAsync();
+    },[])
+
+    const handleAsync  = async() => {
+        let dataAsync;
+        try {
+            dataAsync = await AsyncStorage.getItem('userData')
+        } catch (error) {
+            console.log(error)
         }
-    ]
 
-    const onPress = () => {
-        navigation.navigate('Curso')
+        if(dataAsync){
+            const user_id = JSON.parse(dataAsync)._id
+            setUserId(JSON.parse(dataAsync)._id)
+            fetchMyCourses(user_id)
+        }
+    }
+
+    const fetchMyCourses  = async (user_id) => {
+        const dataSend = new FormData();
+        dataSend.append('user_id', user_id);
+
+        await axios
+        .post('http://10.0.2.2:4000/getAcquiredCourses', dataSend)
+        .then(res => {            
+            if (res.data.response) {                
+                setInfo(res.data.data)
+            } else {
+                setInfo(null);
+                console.log("No se encontraron cursos")
+            }
+        })
+
+    }
+
+    const onPress = (dataCourse) => {
+        navigation.navigate('Curso', {dataCourse})
     }
 
     return(
@@ -40,11 +73,13 @@ export default function MyCourses({navigation}) {
                 style={styles.serachBox}
             />
 
+            {info 
+            ? 
             <FlatList
                 data={info}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item.course?._id}
                 renderItem={ ({item}) => 
-                    <TouchableOpacity onPress={() => onPress()}>
+                    <TouchableOpacity onPress={() => onPress(item)}>
                         <View style={styles.containerCard}>
                             <Card elevation={7} style={styles.card}>
                                 {/* <Card.Title 
@@ -56,18 +91,25 @@ export default function MyCourses({navigation}) {
                                     leftStyle={{}}
                                 /> */}
                                 <View style={{flexDirection: "row"}}>
-                                    <Image resizeMode="cover" style={styles.contentContainer} source={{uri: 'https://image.winudf.com/v2/image1/Y29tLmx1eC5saXZlLndhbGxwYXBlcnMuYW5kLmNyZWF0aXZlLmZhY3Rvcnkud2FsbHBhcGVycy5iYWNrZ3JvdW5kcy5oZC5sd3AuZ3VpdGFyLmxpdmUud2FsbHBhcGVyX3NjcmVlbl8zXzE1NDk4NTgzNjRfMDQ5/screen-3.jpg?fakeurl=1&type=.jpg'}} />
+                                    <Image resizeMode="cover" style={styles.contentContainer} source={{uri: 'http://192.168.1.2:4000//coursesImages/' + item.course?.mainImage}} />
                                     <View>
-                                        <Text style={styles.tileCard}>Curso de Guitarra Electrica NIVEL 1</Text>
-                                        <Text style={styles.descripCard}>Por: Luis Sanchez</Text>                                
-                                        <Text style={{width: 270, padding: 10, paddingTop: 5}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In fermentum accumsan viverra. Aliquam ornare pellentesque malesuada. Sed ut neque eu urna sagittis pellentesque eu ut sapien.</Text>
+                                        <Text style={styles.tileCard}>{item.course?.title}</Text>
+                                        <Text style={styles.descripCard}>Por: {item.userInfo?.name}</Text>                                
+                                        <Text style={{width: 270, padding: 10, paddingTop: 5}}>{item.course?.description.slice(0, 250)+"..."}</Text>
                                     </View>                                                                                                            
                                 </View>                                
                             </Card>
                         </View>
                     </TouchableOpacity>                                         
                 }
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                 }
             />
+            :
+            <Text>No tienes ningun curso todavia</Text>
+            }
+
         </View>
     )
 }

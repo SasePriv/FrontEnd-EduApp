@@ -73,18 +73,18 @@ function AddCourses({navigation, openModal}) {
         handleAsync()
       },[])
     
-      const handleAsync  = async() => {
+    const handleAsync  = async() => {
         let dataAsync;
         try {
-          dataAsync = await AsyncStorage.getItem('userData')
+            dataAsync = await AsyncStorage.getItem('userData')
         } catch (error) {
-          console.log(error)
+            console.log(error)
         }
-    
+
         if(dataAsync){
             setUserId(JSON.parse(dataAsync)._id)
         }
-      }
+    }
 
     const onOpenDrop = () => {
         let acum = 0;
