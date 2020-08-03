@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, Button, Alert, Platform, TouchableOpacity, ScrollView} from 'react-native'
 import { Video } from 'expo-av'
 import * as ScreenOrientation  from 'expo-screen-orientation';
 import Accordian from '../components/accordian'
 import {AntDesign} from "@expo/vector-icons"
 import {SingleImage} from 'react-native-zoom-lightbox';
 import axios from 'axios'
+import * as MediaLibrary from 'expo-media-library';
+import * as FileSystem from 'expo-file-system';
+import * as Permissions from 'expo-permissions';
 
 const principalUri = 'http://192.168.1.4:4000'
 
@@ -34,6 +37,26 @@ export default function Lesson({route}) {
                 setDataAttachtment(null)
             }
         })        
+    }
+
+    const downloadFile = () =>{
+        const uri = "http://techslides.com/demos/sample-videos/small.mp4"
+        let fileUri = FileSystem.documentDirectory + "small.mp4";
+        FileSystem.downloadAsync(uri, fileUri)
+        .then(({ uri }) => {
+            saveFile(uri);
+          })
+          .catch(error => {
+            console.error(error);
+          })
+    }
+
+    const saveFile = async (fileUri) => {
+        const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+        if (status === "granted") {
+            const asset = await MediaLibrary.createAssetAsync(fileUri)
+            await MediaLibrary.createAlbumAsync("EduApp", asset, false)
+        }
     }
 
     console.log('lessons', dataLesson)
@@ -91,10 +114,12 @@ export default function Lesson({route}) {
                     title={"Archivos".toUpperCase()}
                     data={() => 
                         <View>
-                            <View style={styles.files}>
-                                <AntDesign style={styles.icon} name='pdffile1' size={30} color='#0080ff' />
-                                <Text style={styles.textFile}>Notas Musicales</Text>
-                            </View>
+                            <TouchableOpacity onPress={() => downloadFile()}>
+                                <View style={styles.files}>
+                                    <AntDesign style={styles.icon} name='pdffile1' size={30} color='#0080ff' />
+                                    <Text style={styles.textFile}>Notas Musicales</Text>
+                                </View>
+                            </TouchableOpacity>
                             <View style={styles.files}>
                                 <AntDesign style={styles.icon} name='pdffile1' size={30} color='#0080ff' />
                                 <Text style={styles.textFile}>Teclado Notas 1</Text>
