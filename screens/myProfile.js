@@ -2,7 +2,9 @@ import React, {useState, useEffect, useContext} from 'react'
 import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity } from 'react-native'
 import { AntDesign } from '@expo/vector-icons'; 
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
+import { FontAwesome5 } from '@expo/vector-icons'; 
 import AsyncStorage from '@react-native-community/async-storage';
+import Config from '../config'
 
 import { AuthContext } from '../components/context'
 
@@ -26,6 +28,7 @@ export default function MyProfile() {
           }
     }
 
+    
     return(
         <ScrollView>
             <View style={[styles.containerUser]}>
@@ -39,12 +42,20 @@ export default function MyProfile() {
                         <Image 
                             resizeMode="cover" 
                             style={styles.profileImage} 
-                            source={{uri: 'http://192.168.1.2:4000//profileImages/' + userInfo?.profile_image}} 
+                            source={{uri: Config.urlBackEnd + '//profileImages/' + userInfo?.profile_image}} 
                         />
                     </View>
                     <Text style={styles.textWhite}>{userInfo?.name}</Text>
                     <Text style={styles.textWhite}>{userInfo?.email}</Text>
                     <Text style={styles.textWhite}>Tipo de Usuario: {userInfo?.typeOfUser == "teacher" ? "Profesor" : userInfo?.typeOfUser == "user" ? "Usuario Normal" : "Administrador"}</Text>
+                    <View style={[styles.containerWallet, styles.shadow]}>
+                        <View style={styles.TrapezoidStyle}>
+                            <FontAwesome5 style={styles.iconCoin} name="coins" size={20} color="#efb810" />
+                        </View>
+                        <View style={styles.coinText}>
+                            <Text style={styles.textMoney}>1000</Text>
+                        </View>
+                    </View>
                 </View>
             </View>
             <View style={styles.containerOptions}>
@@ -55,10 +66,6 @@ export default function MyProfile() {
                 <View style={styles.eachOption}>
                     <MaterialCommunityIcons name="textbox-password" style={styles.icon} size={25} color="#526065" />
                     <Text style={styles.textEach}>Cambiar la Contraseña</Text>
-                </View>
-                <View style={styles.eachOption}>
-                    <MaterialCommunityIcons name="wallet-membership" style={styles.icon} size={25} color="#526065" />
-                    <Text style={styles.textEach}>Membresia</Text>
                 </View>
                 <View style={styles.eachOption}>
                     <AntDesign name="delete" style={styles.icon} size={25} color="#526065" />
@@ -148,5 +155,36 @@ const styles = StyleSheet.create({
         // fontWeight: "bold",
         fontSize: 15,
         marginTop: 2
-    }
+    },
+    TrapezoidStyle: {
+ 
+    width: 45,
+    height: 0,
+    borderBottomColor: Config.primaryColor,
+    borderBottomWidth: 28,
+    borderLeftWidth: 0,
+    borderRightWidth: 10,
+    borderRightColor: 'transparent',
+    borderLeftColor: 'transparent',
+    alignItems: "center",            
+  },
+  containerWallet:{      
+      flexDirection: "row",
+      backgroundColor: "#fff",
+      marginTop: 5      
+  },
+  iconCoin:{
+      marginTop: 3,
+      fontWeight: "bold",            
+  },
+  coinText:{
+    backgroundColor: "#fff",
+    paddingRight: 10,
+    justifyContent: "center",
+  },
+  textMoney: {
+      fontSize: 18,
+      fontWeight: "bold",
+      marginLeft: 5,      
+  }
 })

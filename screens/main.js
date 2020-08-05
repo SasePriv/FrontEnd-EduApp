@@ -10,6 +10,7 @@ import AddOptionStack from '../routes/addOptionStack'
 import AdminStack from '../routes/adminStack'
 import AsyncStorage from '@react-native-community/async-storage';
 import ProfileStack from '../routes/profileStack'
+import Config from '../config'
 
 
 const Tab = createMaterialBottomTabNavigator();
@@ -41,7 +42,7 @@ export default function MyTabs() {
     <Tab.Navigator
       initialRouteName="Home"
       activeColor="#fff"    
-      barStyle={{ backgroundColor: '#0080ff' }}
+      barStyle={{ backgroundColor: Config.primaryColor }}
     >
       <Tab.Screen
         name="Conference"

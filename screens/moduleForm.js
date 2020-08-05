@@ -13,6 +13,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import { FontAwesome } from '@expo/vector-icons'; 
 import * as DocumentPicker from 'expo-document-picker';
 import axios from 'axios'
+import Config from '../config'
 
 const SLIDER_WIDTH = Dimensions.get('window').width;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.7);
@@ -66,7 +67,7 @@ export default function ModuleForm({route, navigation}){
         dataSend.append('moduleId', moduleId)
         
         await axios
-        .post('http://192.168.1.2:4000/getSingleModule', dataSend)
+        .post( Config.urlBackEnd + '/getSingleModule', dataSend)
         .then(res => {
             if (res.data.response) {
                 let arrayImage = form.info;
@@ -77,7 +78,7 @@ export default function ModuleForm({route, navigation}){
                 res.data.data.attachmentModule.forEach(element => {
                     if (element.type_of_Attachment == "image") {
                         // arrayImage = [...form.info, {uri: element.attachment, file:""}]
-                        arrayImage.push({uri: "http://192.168.1.2:4000//moduleImages/" + element.attachment, file:""})
+                        arrayImage.push({uri: Config.urlBackEnd + "//moduleImages/" + element.attachment, file:""})
                         imageContador = imageContador + 1
                     }else if(element.type_of_Attachment == "file"){
                         // setForm({
@@ -94,7 +95,7 @@ export default function ModuleForm({route, navigation}){
                 });
 
                 if (res.data.data.module.type_of_video_source == "upload") {
-                    arriveVideo = "http://192.168.1.2:4000//moduleVideos/"+ res.data.data.module.attachmentVideo
+                    arriveVideo = Config.urlBackEnd + "//moduleVideos/"+ res.data.data.module.attachmentVideo
                 }else{
                     arriveVideo = res.data.data.module.attachmentVideo
                 }
@@ -328,7 +329,7 @@ export default function ModuleForm({route, navigation}){
         setLoading(true)
 
         await axios
-        .post('http://10.0.2.2:4000/addModule', data, {
+        .post(Config.urlBackEnd + '/addModule', data, {
             headers:  {
                 Accept: 'application/json',
                 'Content-Type': 'multipart/form-data',
@@ -386,7 +387,7 @@ export default function ModuleForm({route, navigation}){
             <View style={styles.loading}>
                 <ActivityIndicator 
                 animating={true} 
-                color={"#0080ff"} 
+                color={Config.primaryColor} 
                 size={100}
                 />
             </View>
@@ -397,7 +398,7 @@ export default function ModuleForm({route, navigation}){
         return(            
         <View style={styles.containerDocument}>                                                                            
             <View style={styles.boxDocument}>
-                <FontAwesome name="file-text-o" style={styles.icon} size={24} color="#0080ff" />
+                <FontAwesome name="file-text-o" style={styles.icon} size={24} color={Config.primaryColor} />
                 <Text style={{width: 290}}>{item.name}</Text>     
                 <TouchableOpacity style={styles.coverEliminate} onPress={() => eliminateFile(index)}>
                     <AntDesign name="closecircle" style={styles.iconEliminate} size={24} color="red"  />
@@ -415,12 +416,12 @@ export default function ModuleForm({route, navigation}){
                     <View style={[styles.formGroup]}>  
                         <Text style={styles.labelText}>Titulo del Modulo</Text>
                         <View style={styles.containerInput}>                    
-                            <MaterialCommunityIcons style={styles.icon} name="format-title" size={24} color="#0080ff" />
+                            <MaterialCommunityIcons style={styles.icon} name="format-title" size={24} color={Config.primaryColor} />
                             <TextInput
                                 onChangeText={(text) => handaleTitle(text)}
                                 value={form.title}
                                 style={[styles.input]}                
-                                selectionColor="#0080ff"
+                                selectionColor={Config.primaryColor}
                                 placeholder="Titulo"                                                                
                             />
                         </View>        
@@ -428,12 +429,12 @@ export default function ModuleForm({route, navigation}){
                     <View style={styles.formGroup}>  
                         <Text style={styles.labelText}>Contenido del Modulo</Text>
                         <View style={styles.containerInput}>                                            
-                            <MaterialIcons name="description" style={[styles.icon, styles.descriptionIcon]} size={24} color="#0080ff" />
+                            <MaterialIcons name="description" style={[styles.icon, styles.descriptionIcon]} size={24} color={Config.primaryColor} />
                             <TextInput
                                 onChangeText={(text) => handleContenido(text)}
                                 value={form.content}
                                 style={[styles.input]}                
-                                selectionColor="#0080ff"
+                                selectionColor={Config.primaryColor}
                                 placeholder="Contenido del Modulo"     
                                 multiline={true}
                                 numberOfLines={5}                           
@@ -444,7 +445,7 @@ export default function ModuleForm({route, navigation}){
                     <View style={[styles.formGroup]}>  
                         <Text style={styles.labelText}>Tipo del Servicio</Text>
                         <View style={[styles.containerInput, styles.getVideo]}>                                                                                                
-                            <AntDesign name="videocamera"  style={styles.icon} size={24} color="#0080ff" />
+                            <AntDesign name="videocamera"  style={styles.icon} size={24} color={Config.primaryColor} />
                             <Text style={styles.titleCheck}>Url Video</Text>
                             <Checkbox
                                 status={form.typeVideo == "url" ? 'checked' : 'unchecked'}
@@ -465,7 +466,7 @@ export default function ModuleForm({route, navigation}){
                                 onChangeText={text => handleUrlVideo(text)}
                                 value={form.urlvideo}
                                 style={[styles.input]}                
-                                selectionColor="#0080ff"
+                                selectionColor={Config.primaryColor}
                                 placeholder="Url"                             
                             />
                         </View>        
@@ -670,7 +671,7 @@ const styles = StyleSheet.create({
     },
     cajaSave: {
         height: 50,
-        backgroundColor:  "#0080ff",
+        backgroundColor: Config.primaryColor,
         justifyContent: "center",
         alignItems: "center",
         borderRadius: 10,

@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import { StyleSheet, Text, View, Button, Alert, ScrollView  } from 'react-native'
 import axios from 'axios'
-
+import Config from '../config'
 
 export default function TeacherPanel() {
 
@@ -13,9 +13,8 @@ export default function TeacherPanel() {
 
     const fecthData = async () =>{
         await axios
-        .get('http://10.0.2.2:4000/getAllUserTeacher')
+        .get(Config.urlBackEnd + '/getAllUserTeacher')
         .then(res => {
-            console.log(res.data)
             if (res.data.response) {
                 setData(res.data.data)
             }else{
@@ -40,10 +39,9 @@ export default function TeacherPanel() {
         dataSend.append('status_teacher', statusChange);
 
         await axios
-        .post('http://10.0.2.2:4000/changeStatusTeacherUser', dataSend)
+        .post(Config.urlBackEnd + '/changeStatusTeacherUser', dataSend)
         .then(res => {
             if (res.data.response) {
-                console.log(res.data.data)
                 fecthData();
             } else {
                 Alert.alert(
@@ -130,7 +128,7 @@ const styles = StyleSheet.create({
         paddingTop: 5,
         paddingBottom: 5,
         marginTop: 10,
-        backgroundColor: "#0080ff",
+        backgroundColor: Config.primaryColor,
         width: 270,
         color: "white",
         fontWeight: "bold",

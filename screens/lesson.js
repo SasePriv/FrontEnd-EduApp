@@ -9,8 +9,7 @@ import axios from 'axios'
 import * as MediaLibrary from 'expo-media-library';
 import * as FileSystem from 'expo-file-system';
 import * as Permissions from 'expo-permissions';
-
-const principalUri = 'http://192.168.1.4:4000'
+import Config from '../config'
 
 export default function Lesson({route}) {
 
@@ -29,7 +28,7 @@ export default function Lesson({route}) {
         dataSend.append('moduleId', moduleId);
 
         await axios
-        .post(principalUri + '/getAttachmentsOfModule', dataSend)
+        .post(Config.urlBackEnd + '/getAttachmentsOfModule', dataSend)
         .then(res => {
             if (res.data.response) {
                 setDataAttachtment(res.data.data)
@@ -59,8 +58,6 @@ export default function Lesson({route}) {
         }
     }
 
-    console.log('lessons', dataLesson)
-
     return(
         <ScrollView>
             <View style={styles.videoContainer}>
@@ -75,7 +72,7 @@ export default function Lesson({route}) {
                     );
                     setOrientationIsLandscape(!orientationIsLandscape);
                     }}
-                    source={{ uri: principalUri + '//moduleVideos/' + dataLesson?.attachmentVideo}}
+                    source={{ uri: Config.urlBackEnd + '//moduleVideos/' + dataLesson?.attachmentVideo}}
                     rate={1.0}
                     volume={1.0}
                     isMuted={false}
@@ -116,12 +113,12 @@ export default function Lesson({route}) {
                         <View>
                             <TouchableOpacity onPress={() => downloadFile()}>
                                 <View style={styles.files}>
-                                    <AntDesign style={styles.icon} name='pdffile1' size={30} color='#0080ff' />
+                                    <AntDesign style={styles.icon} name='pdffile1' size={30} color={Config.primaryColor} />
                                     <Text style={styles.textFile}>Notas Musicales</Text>
                                 </View>
                             </TouchableOpacity>
                             <View style={styles.files}>
-                                <AntDesign style={styles.icon} name='pdffile1' size={30} color='#0080ff' />
+                                <AntDesign style={styles.icon} name='pdffile1' size={30} color={Config.primaryColor} />
                                 <Text style={styles.textFile}>Teclado Notas 1</Text>
                             </View>
                         </View>
@@ -136,7 +133,7 @@ export default function Lesson({route}) {
                                 if(item?.type_of_Attachment == "image"){
                                     return(
                                         <SingleImage 
-                                            uri={principalUri + '/moduleImages/' +item?.attachment}
+                                            uri={Config.urlBackEnd + '/moduleImages/' +item?.attachment}
                                             style={{width: 100, height: 100, marginHorizontal: 8}} 
                                         />
                                     )    
@@ -180,7 +177,7 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
         borderBottomLeftRadius: 10,
         borderBottomRightRadius: 10,
-        borderColor: "#0080ff",
+        borderColor: Config.primaryColor,
         borderTopWidth: 3
     },
     files: {

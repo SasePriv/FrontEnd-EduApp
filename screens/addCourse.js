@@ -12,10 +12,10 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import Carousel from 'react-native-snap-carousel';
 import axios from 'axios'
-
-import AsyncStorage from '@react-native-community/async-storage';
-
 import { connect } from "react-redux"
+import AsyncStorage from '@react-native-community/async-storage';
+import Config from '../config'
+
 import CustomModalModule from './customModalModule'
 
 const SLIDER_WIDTH = Dimensions.get('window').width;
@@ -56,14 +56,7 @@ function AddCourses({navigation, openModal}) {
 
     const [userId, setUserId] = useState(null)
 
-    const items = [
-        {label: 'Guitarra', value: 'guitarra'},
-        {label: 'Guitarra Electrica', value: 'Guitarra Electrica'},  
-        {label: 'Bajo', value: 'Bajo'},       
-        {label: 'Bateria', value: 'Bateria'},    
-        {label: 'Piano', value: 'Piano'}, 
-        {label: 'Saxofon', value: 'Saxofon'},                          
-    ]
+    const [items, setItems] = useState(null)
 
     useEffect(() => {
         // getPermissionAsync();
@@ -71,6 +64,7 @@ function AddCourses({navigation, openModal}) {
 
     useEffect(() =>{ 
         handleAsync()
+        fetchCategory()
       },[])
     
     const handleAsync  = async() => {
@@ -84,6 +78,27 @@ function AddCourses({navigation, openModal}) {
         if(dataAsync){
             setUserId(JSON.parse(dataAsync)._id)
         }
+    }
+
+    const fetchCategory = async() => {
+        let resultArray = [];
+
+        await axios
+        .get( Config.urlBackEnd + '/getAllCategory')
+        .then(res => {
+            if (res.data.response) {
+                console.log(res.data.data)
+                res.data.data.forEach(element => {
+                    resultArray.push({label: element.title, value: element.title})
+                })
+                setItems(resultArray)
+            } else {
+                setItems([{
+                    label: "No hay categorias disponible",
+                    value: 0
+                }])
+            }
+        })
     }
 
     const onOpenDrop = () => {
@@ -399,7 +414,7 @@ function AddCourses({navigation, openModal}) {
             });
         }
         await axios
-        .post('http://10.0.2.2:4000/addCourse', data, {
+        .post( Config.urlBackEnd + '/addCourse', data, {
             headers:  {
                 Accept: 'application/json',
                 'Content-Type': 'multipart/form-data',
@@ -426,7 +441,7 @@ function AddCourses({navigation, openModal}) {
             <View style={styles.loading}>
                 <ActivityIndicator 
                 animating={true} 
-                color={"#0080ff"} 
+                color={Config.primaryColor} 
                 size={100}
                 />
             </View>
@@ -450,12 +465,12 @@ function AddCourses({navigation, openModal}) {
                     <View style={styles.formGroup}>  
                         <Text style={styles.labelText}>Titulo del Curso</Text>
                         <View style={styles.containerInput}>                    
-                            <MaterialCommunityIcons style={styles.icon} name="format-title" size={24} color="#0080ff" />
+                            <MaterialCommunityIcons style={styles.icon} name="format-title" size={24} color={Config.primaryColor} />
                             <TextInput
                                 onChangeText={text => setForm({...formData,title: text})}
                                 value={formData.title}
                                 style={[styles.input]}                
-                                selectionColor="#0080ff"
+                                selectionColor={Config.primaryColor}
                                 placeholder="Titulo"                                
                             />
                         </View>        
@@ -463,12 +478,12 @@ function AddCourses({navigation, openModal}) {
                     <View style={styles.formGroup}>  
                         <Text style={styles.labelText}>Descripcion del Curso</Text>
                         <View style={styles.containerInput}>                                            
-                            <MaterialIcons name="description" style={[styles.icon, styles.descriptionIcon]} size={24} color="#0080ff" />
+                            <MaterialIcons name="description" style={[styles.icon, styles.descriptionIcon]} size={24} color={Config.primaryColor} />
                             <TextInput
                                 onChangeText={text => setForm({...formData,description: text})}
                                 value={formData.description}
                                 style={[styles.input]}                
-                                selectionColor="#0080ff"
+                                selectionColor={Config.primaryColor}
                                 placeholder="Descripcion del Contenido del Curso"     
                                 multiline={true}
                                 numberOfLines={5}                           
@@ -478,7 +493,9 @@ function AddCourses({navigation, openModal}) {
                     <View style={styles.formGroup}>  
                         <Text style={styles.labelText}>Categoria del Curso</Text>
                         <View style={styles.containerInput}>                                                                    
-                            <Entypo name="add-to-list" style={[styles.icon, {marginTop: 8}]} size={24} color="#0080ff"/>
+                            <Entypo name="add-to-list" style={[styles.icon, {marginTop: 8}]} size={24} color={Config.primaryColor}/>
+                            {items 
+                            ? 
                             <DropDownPicker
                                 items={items}
                                 defaultValue={formData.category}
@@ -492,17 +509,21 @@ function AddCourses({navigation, openModal}) {
                                 onOpen={() => onOpenDrop()}   
                                 onClose={() => setStatus({dropDown: 0})}                                
                             />
+                            : 
+                            null
+                            }
+
                         </View>        
                     </View>
                     <View style={styles.formGroup}>  
                         <Text style={styles.labelText}>Horas del Curso</Text>
                         <View style={styles.containerInput}>                                            
-                            <MaterialIcons name="access-time" style={styles.icon} size={24} color="#0080ff" />
+                            <MaterialIcons name="access-time" style={styles.icon} size={24} color={Config.primaryColor} />
                             <TextInput
                                 onChangeText={text => setForm({...formData,hours: text})}
                                 value={formData.hours}
                                 style={[styles.input]}                
-                                selectionColor="#0080ff"
+                                selectionColor={Config.primaryColor}
                                 placeholder="Introducir la horas totales del curso"  
                                 keyboardType='numeric'                              
                             />
@@ -511,7 +532,7 @@ function AddCourses({navigation, openModal}) {
                     <View style={styles.formGroup}>  
                         <Text style={styles.labelText}>Tipo del Servicio</Text>
                         <View style={styles.containerInput}>                                                                    
-                            <MaterialIcons name="attach-money" style={styles.icon} size={24} color="#0080ff" />
+                            <MaterialIcons name="attach-money" style={styles.icon} size={24} color={Config.primaryColor} />
                             <Text style={styles.titleCheck}>Gratis</Text>
                             <Checkbox
                                 status={formData.typeService == "free" ? 'checked' : 'unchecked'}
@@ -527,12 +548,12 @@ function AddCourses({navigation, openModal}) {
                     <View style={[styles.formGroup, formData.typeService == "free" && styles.formPrice]}>  
                         <Text style={styles.labelText}>Precio</Text>
                         <View style={styles.containerInput}>                                        
-                            <FontAwesome5 name="money-bill-wave" style={styles.icon} size={24} color="#0080ff" />
+                            <FontAwesome5 name="money-bill-wave" style={styles.icon} size={24} color={Config.primaryColor} />
                             <TextInput
                                 onChangeText={text => setForm({...formData,price: text})}
                                 value={formData.price}
                                 style={[styles.input]}                
-                                selectionColor="#0080ff"
+                                selectionColor={Config.primaryColor}
                                 placeholder="Precio"  
                                 keyboardType='numeric' 
                                 editable={formData.typeService == "free" ? false : true}                                
@@ -693,7 +714,7 @@ const styles = StyleSheet.create({
     Module: {
         width: "100%",
         height: 40,
-        backgroundColor: "#0080ff",
+        backgroundColor: Config.primaryColor,
         marginTop: 5,
         justifyContent: "center",
         alignItems: "center"

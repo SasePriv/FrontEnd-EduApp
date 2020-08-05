@@ -5,7 +5,7 @@ import { Animated, TouchableOpacity, Dimensions, Text, ImageBackground, ScrollVi
 import * as Icon from "@expo/vector-icons"
 import { connect } from "react-redux"
 import ParalaxImage from '../components/parallaxImage'
-import { $CombinedState } from "redux"
+import Config from '../config'
 
 const screenHeight = Dimensions.get("window").height
 
@@ -61,11 +61,11 @@ function CustomModal({action, CloseModal, data, close, getFreeCourse}){
                         <ImageBackground 
                             style={{ flex: 1,}}  
                             // imageStyle={{ borderRadius: 10 }}
-                            source={{uri: 'http://192.168.1.2:4000//coursesImages/' + data?.dataSelectedCourse?.mainImage}} />
+                            source={{uri: Config.urlBackEnd + '//coursesImages/' + data?.dataSelectedCourse?.mainImage}} />
                         <View style={styles.hoverImage}>
                             <ModelTileBody>{data?.dataSelectedCourse?.title}</ModelTileBody>
                             <View style={styles.containerImage}>                                
-                                <Image resizeMode="cover" style={styles.contentContainer} source={{uri: 'http://192.168.1.2:4000//profileImages/' + data?.userInfo?.profile_image}} />
+                                <Image resizeMode="cover" style={styles.contentContainer} source={{uri: Config.urlBackEnd + '//profileImages/' + data?.userInfo?.profile_image}} />
                             </View>
                             <Text style={styles.descripCard}>Por: {data?.userInfo?.name}</Text>     
                         </View>
@@ -77,7 +77,7 @@ function CustomModal({action, CloseModal, data, close, getFreeCourse}){
                         style={{ position: "absolute", top: 175, left: "50%", marginLeft: -22, zIndex: 1 }}
                     >
                         <CloseView style={{ elevation: 10 }}>
-                            <Icon.Ionicons name='ios-close' size={44} color='#0080ff' />
+                            <Icon.Ionicons name='ios-close' size={44} color={Config.primaryColor} />
                         </CloseView>
                     </TouchableOpacity>   
 
@@ -104,7 +104,7 @@ function CustomModal({action, CloseModal, data, close, getFreeCourse}){
                         <List.Accordion
                             title="Modulos"
                             left={props => <List.Icon {...props} icon="book-open" />}                        
-                            raised theme={{ colors: {primary: '#0080ff'} }}
+                            raised theme={{ colors: {primary: Config.primaryColor} }}
                             style={{marginTop: -10,}}
                         >
                         {Array.isArray(data?.namesModulosCourses) && data?.namesModulosCourses.length
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
         paddingTop: 5,
         paddingBottom: 5,
         marginTop: 10,
-        backgroundColor: "#0080ff",
+        backgroundColor: Config.primaryColor,
         width: 140,
         color: "white",
         fontWeight: "bold",
@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
         paddingBottom: 5,
         fontSize: 20,
         paddingTop: 5,
-        backgroundColor: "#0080ff",
+        backgroundColor: Config.primaryColor,
         width: 150,
         color: "white",
         fontWeight: "bold",
@@ -253,7 +253,7 @@ const PriceText = styled.Text`
 
 const PriceButton = styled.Text`
     fontSize: 16px;
-    color: #0080ff;
+    color: ${Config.primaryColor};
     fontWeight: bold;
     padding: 1px;            
     width: 100%;
@@ -263,7 +263,7 @@ const PriceButton = styled.Text`
 const PriceBar = styled.View`
     height: 45px;
     flexDirection: row;
-    background: #0080ff;
+    background: ${Config.primaryColor};
     box-shadow: 10px 5px 10px rgba(0, 0, 0, 0.8);
     borderColor: white;
     borderBottomWidth: 3px;

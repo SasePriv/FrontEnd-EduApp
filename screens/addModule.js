@@ -1,11 +1,12 @@
 import React, {useState, useEffect} from 'react'
-import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, FlatList, ActivityIndicator, ColorPropType } from 'react-native'
 import { Divider } from 'react-native-paper';
 import {AntDesign} from "@expo/vector-icons"
 import { useSafeArea } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons'; 
 import axios from 'axios'
 import { HeaderBackButton } from '@react-navigation/stack'; 
+import Config from '../config'
 
 export default function Curso({ route ,navigation }) {
 
@@ -36,7 +37,7 @@ export default function Curso({ route ,navigation }) {
 
         try {
             await axios
-            .post('http://192.168.1.2:4000/getSingleCourse', dataForm)
+            .post( Config.urlBackEnd + '/getSingleCourse', dataForm)
             .then(res => {
                 if (res.data.response) {
                     console.log(res.data)
@@ -64,7 +65,7 @@ export default function Curso({ route ,navigation }) {
         dataSend.append('courseId', course_id);
 
         await axios
-        .post('http://192.168.1.2:4000/eliminateCourse', dataSend)
+        .post( Config.urlBackEnd + '/eliminateCourse', dataSend)
         .then(res => {
             if (res.data.response) {
                 navigation.navigate('Nueva Opcion')
@@ -86,7 +87,7 @@ export default function Curso({ route ,navigation }) {
         return(
             <TouchableOpacity onPress={() => handleEachModuleAction(item._id)} style={[styles.moduloContainer, styles.shadow]}>
                 <Text style={styles.modulo}>MODULO: {item.title}</Text>                    
-                <AntDesign style={styles.icon} name='book' size={30} color='#0080ff' />
+                <AntDesign style={styles.icon} name='book' size={30} color={Config.primaryColor} />
             </TouchableOpacity>
         )
     }
@@ -102,11 +103,11 @@ export default function Curso({ route ,navigation }) {
                 <Image 
                     resizeMode="cover" 
                     style={styles.imageMain} 
-                    source={{uri: 'http://192.168.1.2:4000//coursesImages/'+dataInfo.course?.mainImage}} 
+                    source={{uri: Config.urlBackEnd + '//coursesImages/'+dataInfo.course?.mainImage}} 
                 />
                 <View style={styles.hoverBack}>
                     <View style={styles.containerImage}>                                
-                        <Image resizeMode="cover" style={styles.contentContainer} source={{uri: 'http://192.168.1.2:4000//profileImages/'+dataInfo.userInfo?.profile_image}} />
+                        <Image resizeMode="cover" style={styles.contentContainer} source={{uri: Config.urlBackEnd + '//profileImages/'+dataInfo.userInfo?.profile_image}} />
                     </View>
                     <Text style={[styles.descripCard, styles.other]}>{"Profesor".toUpperCase()}</Text> 
                     <Text style={styles.descripCard}>{dataInfo.userInfo?.name}</Text>       
@@ -120,7 +121,7 @@ export default function Curso({ route ,navigation }) {
                     <View style={styles.CourseBtn}>
                         <View style={styles.iconOptions}>
                             <TouchableOpacity>
-                                <FontAwesome name="edit" size={50} color="#0080ff" />
+                                <FontAwesome name="edit" size={50} color={Config.primaryColor} />
                             </TouchableOpacity>
                         </View>
                         <View style={styles.iconOptions}>
@@ -137,7 +138,7 @@ export default function Curso({ route ,navigation }) {
             <View style={{alignItems: "center"}}>                    
                 <TouchableOpacity onPress={onPress}>  
                     <View style={[styles.addModule, styles.shadow]}>
-                        <AntDesign name="pluscircle" size={30} color="#0080ff" />
+                        <AntDesign name="pluscircle" size={30} color={Config.primaryColor}  />
                     </View>                                        
                 </TouchableOpacity>
                 <FlatList 
@@ -231,7 +232,7 @@ const styles = StyleSheet.create({
     },
     viewMore: {
         textAlign: "center",
-        color: "#0080ff",
+        color: Config.primaryColor,
         fontWeight: "bold", 
         paddingTop: 7       
     },
@@ -239,7 +240,7 @@ const styles = StyleSheet.create({
         width: "100%",
         backgroundColor: "white",
         marginTop: 10,
-        color: "#0080ff",
+        color: Config.primaryColor,
         textAlign: "center",
         fontSize: 20,
         fontWeight: "bold",

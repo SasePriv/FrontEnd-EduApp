@@ -2,6 +2,7 @@ import React, { useState, useEffect }  from 'react'
 import { StyleSheet, Text, View, ImageBackground, TouchableOpacity } from 'react-native'
 import { FlatGrid } from 'react-native-super-grid';
 import axios from 'axios'
+import Config from '../config'
 
 export default function GridCategory( {naviga, dataCategory} ) {
     const [info, setInfo] = useState(null)
@@ -28,9 +29,9 @@ export default function GridCategory( {naviga, dataCategory} ) {
                 <TouchableOpacity onPress={() => onPress(item.title)} style={styles.appButtonContainer}>                    
                     <ImageBackground 
                         style={styles.boxOne}  
-                        imageStyle={{ borderTopLeftRadius: 10, borderTopRightRadius: 10, borderColor: "#0080ff",
+                        imageStyle={{ borderTopLeftRadius: 10, borderTopRightRadius: 10, borderColor: Config.primaryColor,
                         borderWidth: 1}}
-                        source={{uri: 'http://192.168.1.2:4000//categoryImages/' + item.mainImage}} 
+                        source={{uri: Config.urlBackEnd + '//categoryImages/' + item.mainImage}} 
                     />                    
                     <Text style={styles.text}>{item.title}</Text>
                 </TouchableOpacity>
@@ -79,9 +80,9 @@ const styles = StyleSheet.create({
         borderBottomRightRadius: 20,
         fontSize: 15,
         padding: 5,        
-        color: "#0080ff",
+        color: Config.primaryColor,
         fontWeight: "bold",
-        borderColor: "#0080ff",
+        borderColor: Config.primaryColor,
         borderWidth: 1
     }
 })

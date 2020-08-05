@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Image, ScrollView, TextInput, Button, Touchable
 import { Switch } from 'react-native-paper';
 import { AntDesign } from '@expo/vector-icons'; 
 import axios from 'axios'
+import Config from '../config'
 
 import { AuthContext } from '../components/context'
 
@@ -23,7 +24,7 @@ export default function RootScreen({navigation}) {
         dataSend.append('password', password)
 
         await axios
-        .post('http://192.168.1.2:4000/login', dataSend)
+        .post(Config.urlBackEnd + '/login', dataSend)
         .then(res => {
             console.log(res.data)
             if (res.data.response) {
@@ -49,23 +50,23 @@ export default function RootScreen({navigation}) {
             <View style={[styles.cardContainer,]}>
                 <Text style={styles.labelText}>Email</Text>
                 <View style={styles.containerInput}>
-                    <AntDesign name="user" size={24} style={styles.icon} color="#0080ff" />
+                    <AntDesign name="user" size={24} style={styles.icon} color={Config.primaryColor} />
                     <TextInput
                         onChangeText={text => setForm({...form,email: text})}
                         value={form.email}
                         style={[styles.input]}                
-                        selectionColor="#0080ff"
+                        selectionColor={Config.primaryColor}
                         placeholder="Email"                                
                     />
                 </View>
                 <Text style={styles.labelText}>Contraseña</Text>
                 <View style={styles.containerInput}>
-                    <AntDesign name="lock" size={24} style={styles.icon} color="#0080ff" />
+                    <AntDesign name="lock" size={24} style={styles.icon} color={Config.primaryColor} />
                     <TextInput
                         onChangeText={text => setForm({...form,password: text})}
                         value={form.password}
                         style={[styles.input]}                
-                        selectionColor="#0080ff"
+                        selectionColor={Config.primaryColor}
                         placeholder="Contraseña"                                
                     />
                 </View>
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: "#0080ff",
+        backgroundColor: Config.primaryColor,
         alignItems: "center",        
     },
     logoLogin: {
@@ -151,7 +152,7 @@ const styles = StyleSheet.create({
         paddingLeft: 0
     },
     fogot: {
-        color: "#0080ff"
+        color: Config.primaryColor
     },
     btn:{
         marginVertical: 10,    

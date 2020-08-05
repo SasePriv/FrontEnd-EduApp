@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import { AntDesign } from '@expo/vector-icons'; 
 import { StyleSheet, Text, View, Button, ScrollView, Image, TextInput, TouchableOpacity } from 'react-native'
 import axios from 'axios'
+import Config from '../config'
 
 export default function ForgotPassword({navigation}) {
 
@@ -16,7 +17,7 @@ export default function ForgotPassword({navigation}) {
             dataSend.append('email', email);
 
             await axios
-            .post('http://192.168.1.2:4000/forgotPassword', dataSend)
+            .post( Config.urlBackEnd + '/forgotPassword', dataSend)
             .then(res => {
                 if (res.data.response) {
                     setEmailStatus(true)
@@ -64,12 +65,12 @@ export default function ForgotPassword({navigation}) {
                     <Text style={styles.labelText}>Olvido la contraseña?</Text>
                     <Text style={styles.labeldescription}>Introduce el correo electronico asociado a la cuenta</Text>
                     <View style={styles.containerInput}>
-                        <AntDesign name="user" size={24} style={styles.icon} color="#0080ff" />
+                        <AntDesign name="user" size={24} style={styles.icon} color={Config.primaryColor} />
                         <TextInput
                             onChangeText={text => setEmail(text)}
                             value={email}
                             style={[styles.input]}                
-                            selectionColor="#0080ff"
+                            selectionColor={Config.primaryColor}
                             placeholder="Email"                                
                         />
                     </View>
@@ -113,7 +114,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: "#0080ff",
+        backgroundColor: Config.primaryColor,
         alignItems: "center",        
     },
     logoLogin: {
@@ -159,7 +160,7 @@ const styles = StyleSheet.create({
         paddingLeft: 0
     },
     fogot: {
-        color: "#0080ff",
+        color: Config.primaryColor,
         // textAlign: "center",
         marginBottom: 10,
         fontSize: 15

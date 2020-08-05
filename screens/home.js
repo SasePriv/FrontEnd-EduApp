@@ -6,6 +6,7 @@ import CustomModal from './customModal'
 import { connect } from "react-redux"
 import axios from 'axios'
 import AsyncStorage from '@react-native-community/async-storage';
+import Config from '../config'
 
 
 const screenHeight = Dimensions.get("window").height
@@ -65,7 +66,7 @@ function Home({navigation, openModal}) {
         dataSend.append('courseId', informacion.course._id)
 
         await axios
-        .post('http://10.0.2.2:4000/getAttachmentsOfCourse', dataSend)
+        .post( Config.urlBackEnd + '/getAttachmentsOfCourse', dataSend)
         .then(res => {
             // console.log(res.data)
             if (res.data.response) {
@@ -76,7 +77,7 @@ function Home({navigation, openModal}) {
         })
 
         await axios
-        .post('http://10.0.2.2:4000/getNamesModulesOfCourse', dataSend)
+        .post( Config.urlBackEnd + '/getNamesModulesOfCourse', dataSend)
         .then(res => {
             // console.log(res.data)
             if (res.data.response) {
@@ -98,7 +99,7 @@ function Home({navigation, openModal}) {
 
     const fetchCategoryData = async() =>{
         await axios
-        .get('http://10.0.2.2:4000/getAllCategory')
+        .get( Config.urlBackEnd + '/getAllCategory')
         .then(res => {
             if (res.data.response) {          
                 setDataCategory(res.data.data)
@@ -110,9 +111,8 @@ function Home({navigation, openModal}) {
 
     const fecthLastCourses = async() => {
         await axios
-        .get('http://10.0.2.2:4000/getLastestCourses')
+        .get( Config.urlBackEnd + '/getLastestCourses')
         .then(res => {
-            console.log(res.data)
             if (res.data.response) {
                 setLastestCourses(res.data.data)
             }else{
@@ -128,7 +128,7 @@ function Home({navigation, openModal}) {
         dataSend.append('typeService', course.typeService);
 
         await axios
-        .post('http://10.0.2.2:4000/acquireCourse', dataSend)
+        .post( Config.urlBackEnd + '/acquireCourse', dataSend)
         .then(res => {
             if (res.data.response) {
                 Alert.alert(
@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
         paddingTop: 5,
         paddingBottom: 5,
         marginTop: 10,
-        backgroundColor: "#0080ff",
+        backgroundColor: Config.primaryColor,
         width: 130,
         color: "white",
         fontWeight: "bold",
@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
         paddingBottom: 5,
         fontSize: 25,
         paddingTop: 5,
-        backgroundColor: "#0080ff",
+        backgroundColor: Config.primaryColor,
         width: 180,
         color: "white",
         fontWeight: "bold",

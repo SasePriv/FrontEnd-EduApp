@@ -1,6 +1,7 @@
 import React, { useState }  from 'react'
 import { StyleSheet, Text, View, ImageBackground, TouchableOpacity, ScrollView } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'; 
+import Config from '../config'
 
 export default function CardCustom( {title, icon} ) {
 
@@ -21,7 +22,7 @@ const styles = StyleSheet.create({
         // marginHorizontal: 20,
         borderColor: "#000",
         borderWidth: 0,
-        backgroundColor: "#0080ff",
+        backgroundColor: Config.primaryColor,
         height: 250,
         display: "flex",
         borderRadius: 40,

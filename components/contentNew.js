@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Dimensions, TouchableOpacity} from 'react-nativ
 import { Card, Title } from 'react-native-paper';
 import Carousel from 'react-native-snap-carousel';
 import axios from 'axios'
+import Config from '../config'
 
 const SLIDER_WIDTH = Dimensions.get('window').width;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.7);
@@ -21,7 +22,7 @@ function ContentNews({onPressFun, dataLastCourses}) {
         return (            
             <TouchableOpacity onPress={() => onPressFun(item)} style={styles.caja}>
                 <Card elevation={7} >
-                    <Card.Cover source={{ uri: 'http://192.168.1.2:4000//coursesImages/' + item.course.mainImage}} />
+                    <Card.Cover source={{ uri: Config.urlBackEnd + '//coursesImages/' + item.course.mainImage}} />
                     {/* <Title style={item.create === "NUEVO" ? styles.titleCoverNuevo : styles.titleCover}>{item.create}</Title> */}
                     <Title style={true ? styles.titleCoverNuevo : styles.titleCover}>NUEVO</Title>
                     <Card.Title 
@@ -77,14 +78,14 @@ const styles = StyleSheet.create({
         fontSize: 25,
         fontWeight: "bold",
         marginRight: 10,
-        color: "#0080ff",
+        color: Config.primaryColor,
     },
     subtitleCard: {
-        color: "#0080ff",
+        color: Config.primaryColor,
     },
     titleCover: {
         position: "absolute",
-        color: "#0080ff",
+        color: Config.primaryColor,
         fontWeight: "bold",
         padding: 5,
         backgroundColor: "rgba(255,255,255,0.7)",
@@ -97,7 +98,7 @@ const styles = StyleSheet.create({
     },
     titleCoverNuevo: {
         position: "absolute",
-        color: "#0080ff",
+        color: Config.primaryColor,
         fontWeight: "bold",
         padding: 5,
         backgroundColor: "rgba(255,255,255,0.7)",
