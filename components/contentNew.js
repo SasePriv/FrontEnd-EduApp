@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { StyleSheet, Text, View, Dimensions, TouchableOpacity} from 'react-native'
+import { StyleSheet, Text, View, Dimensions, TouchableOpacity, RefreshControlBase} from 'react-native'
 import { Card, Title } from 'react-native-paper';
 import Carousel from 'react-native-snap-carousel';
 import axios from 'axios'
@@ -17,6 +17,8 @@ function ContentNews({onPressFun, dataLastCourses}) {
             setInfo(dataLastCourses)
         }
     })
+
+    console.log("informacion",info)
 
     const renderItem = ({item, index}) => {
         return (            
