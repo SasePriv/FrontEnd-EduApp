@@ -16,10 +16,9 @@ const itemSkus = Platform.select({
       '2000_monedas' 
     ],
     android: [
-        // '1000_monedas',
-        // '2000_monedas',
-        // '3000_monedas'
-        "android.test.purchased"
+        '1000_monedas',
+        '2000_monedas',
+        '3000_monedas'        
     ]
   });
 
@@ -40,7 +39,7 @@ export default function MyProfile() {
 
     useEffect(() => {
         // initializeInAppPurchase()
-        fetchProductsData()        
+        // fetchProductsData()        
     },[])
 
     const fetchUserData = async() => {
@@ -118,6 +117,7 @@ export default function MyProfile() {
                 }
             })
     }
+    var example = "android.test.purchased"
     
     return(
         <ScrollView>
@@ -190,7 +190,17 @@ export default function MyProfile() {
                     )
                 })
                 :
-                    null
+                <TouchableOpacity key={index} onPress={() => requestPurchase_Addcoin(example)} style={{width: "33.5%"}}>
+                    <View style={styles.btnAddCoins}>
+                        <Text style={styles.textAddCoin}>Añadir</Text>
+                        <View style={styles.numberCoin}>
+                            <Text style={[styles.textAddCoin, styles.textCoinCenter]}>{monedas}</Text>
+                            <FontAwesome5 style={styles.iconCoinBoc} name="coins" size={20} color="#efb810" />
+                        </View>
+                        <Text style={styles.textAddCoin}>Monedas</Text>
+                        <Text style={styles.textAddCoin}>{product.price}$</Text>
+                    </View>
+                </TouchableOpacity>
                 }
 
             </View>
@@ -210,10 +220,13 @@ export default function MyProfile() {
                         <Text style={styles.textEach}>Añadir Monedas</Text>
                     </View>
                 </TouchableOpacity> */}
+                
+                <TouchableOpacity onPress={() => requestPurchase_Addcoin("android.test.purchased")}>
                 <View style={styles.eachOption}>
                     <AntDesign name="delete" style={styles.icon} size={25} color="#526065" />
                     <Text style={styles.textEach}>Eliminar Cuenta</Text>
                 </View>
+                </TouchableOpacity>
 
                 <TouchableOpacity onPress={signOut}>
                     <View style={styles.eachOption}>

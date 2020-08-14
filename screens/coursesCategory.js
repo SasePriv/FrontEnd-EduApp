@@ -18,11 +18,27 @@ function CoursesCategory({openModal, action, route ,navigation }) {
 
     const [selected, setSelected] = useState(null)
 
+    const [userId, setUserId] = useState(null)
+
     useEffect(() => {
         const { category } = route.params;
         setCategoryTitle(category);
         fetchCategoryData(category)
+        handleAsync()
     },[])
+
+    const handleAsync  = async() => {
+        let dataAsync;
+        try {
+            dataAsync = await AsyncStorage.getItem('userData')
+        } catch (error) {
+            console.log(error)
+        }
+
+        if(dataAsync){
+            setUserId(JSON.parse(dataAsync)._id)  
+        }
+    }
 
     const fetchCategoryData = async (category) => {
 

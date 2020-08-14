@@ -11,6 +11,7 @@ import * as FileSystem from 'expo-file-system';
 import * as Permissions from 'expo-permissions';
 import Config from '../config'
 
+
 export default function Lesson({route}) {
 
     const [orientationIsLandscape, setOrientationIsLandscape] = useState(false);
@@ -72,7 +73,7 @@ export default function Lesson({route}) {
                     );
                     setOrientationIsLandscape(!orientationIsLandscape);
                     }}
-                    source={{ uri: Config.urlBackEnd + '//moduleVideos/' + dataLesson?.attachmentVideo}}
+                    source={{ uri: Config.urlBackEnd + '//moduleVideos/' + dataLesson?.attachmentVideo }}                    
                     rate={1.0}
                     volume={1.0}
                     isMuted={false}

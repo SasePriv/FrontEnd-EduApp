@@ -23,7 +23,7 @@ const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.7);
 export default function ModuleForm({route, navigation}){
 
     const [form, setForm] = useState({
-        title: "",
+        title: "Modulo",
         content: "",
         typeVideo: "url",   
         urlvideo: "",
@@ -274,19 +274,14 @@ export default function ModuleForm({route, navigation}){
         data.append('coursesId', course_id)
         data.append('title', form.title)
         data.append('contentText', form.content)
-        data.append('type_of_video_source', form.typeVideo)
         data.append('contadorImage', form.contadorImage)
         data.append('contadorFiles', form.contadorFiles)
-
-        if (form.typeVideo == "url") {
-            data.append('attachmentVideo', form.urlvideo)
-        }else{
-            data.append('attachmentVideo', {
-                uri: form.video,
-                name: `videoModule.${fileType}`,
-                type: `video/${fileType}`
-            })
-        }
+        data.append('attachmentVideo', {
+            uri: form.video,
+            name: `videoModule.${fileType}`,
+            type: `video/${fileType}`
+        })
+        
 
         
 
@@ -411,7 +406,7 @@ export default function ModuleForm({route, navigation}){
     return(          
             <Container>
                 <ScrollView>
-                    <Text style={styles.titleModule}>Module 1</Text>
+                    <Text style={styles.titleModule}>{form.title}</Text>
                     
                     <View style={[styles.formGroup]}>  
                         <Text style={styles.labelText}>Titulo del Modulo</Text>
@@ -443,8 +438,8 @@ export default function ModuleForm({route, navigation}){
                     </View> 
 
                     <View style={[styles.formGroup]}>  
-                        <Text style={styles.labelText}>Tipo del Servicio</Text>
-                        <View style={[styles.containerInput, styles.getVideo]}>                                                                                                
+                        <Text style={styles.labelText}>Video del Modulo</Text>
+                        {/* <View style={[styles.containerInput, styles.getVideo]}>                                                                                                
                             <AntDesign name="videocamera"  style={styles.icon} size={24} color={Config.primaryColor} />
                             <Text style={styles.titleCheck}>Url Video</Text>
                             <Checkbox
@@ -456,9 +451,9 @@ export default function ModuleForm({route, navigation}){
                                 status={form.typeVideo == "upload" ? 'checked' : 'unchecked'}
                                 onPress={() => handleCheckUpload()}
                             />
-                        </View>        
+                        </View>         */}
                     </View>
-                    {form.typeVideo == "url" 
+                    {/* {form.typeVideo == "url" 
                     ?
                     <View style={styles.formGroup}>                          
                         <View style={[styles.containerInput]}>                                                                        
@@ -471,7 +466,7 @@ export default function ModuleForm({route, navigation}){
                             />
                         </View>        
                     </View>
-                    :
+                    : */}
                     <View>
                              
                     {form.video 
@@ -499,13 +494,13 @@ export default function ModuleForm({route, navigation}){
                     </View>
                     }
                     <View style={[styles.formGroup, styles.btnVideo]}>       
-                        <Button title="Subir imagen desde la galeria" onPress={pickVideo} />                        
+                        <Button title="Subir video desde la galeria" onPress={pickVideo} />                        
                     </View>
                     </View>
-                    }
+                    {/* } */}
 
                     <View style={styles.formGroup}>  
-                        <Text style={styles.labelText}>Imagenes del Curso</Text>
+                        <Text style={styles.labelText}>Imagenes del Modulo</Text>
                         <View style={styles.containerInput}>                                            
                             {/* <FontAwesome5 name="money-bill-wave" style={styles.icon} size={24} color="#0080ff" /> */}
                             <Carousel
@@ -522,7 +517,7 @@ export default function ModuleForm({route, navigation}){
                     </View>
 
                     <View style={styles.formGroup}>  
-                        <Text style={styles.labelText}>Documentos del Curso</Text>
+                        <Text style={styles.labelText}>Documentos del Modulo</Text>
                         <View style={styles.group}>
 
                             <View style={{alignItems:"center", margin: 10}}>

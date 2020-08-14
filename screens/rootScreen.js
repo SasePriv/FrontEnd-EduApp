@@ -67,6 +67,7 @@ export default function RootScreen({navigation}) {
                         value={form.password}
                         style={[styles.input]}                
                         selectionColor={Config.primaryColor}
+                        secureTextEntry={true}   
                         placeholder="Contraseña"                                
                     />
                 </View>
