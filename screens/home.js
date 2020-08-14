@@ -7,6 +7,8 @@ import { connect } from "react-redux"
 import axios from 'axios'
 import AsyncStorage from '@react-native-community/async-storage';
 import Config from '../config'
+import { FontAwesome5 } from '@expo/vector-icons'; 
+import { consumePurchaseAndroid } from 'react-native-iap'
 
 
 const screenHeight = Dimensions.get("window").height
@@ -31,18 +33,70 @@ function Home({navigation, openModal}) {
 
     const [userId, setUserId] = useState(null)
 
+    const [userWallet, setUserWallet] = useState(0)
+
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
         fetchCategoryData();
         fecthLastCourses();
+        handleAsync()   
         wait(2000).then(() => setRefreshing(false));
     }, []);
 
     useEffect(() => {
         fetchCategoryData()
         fecthLastCourses()
-        handleAsync()
+        handleAsync() 
     },[])
+
+    const fetchUserWallet = async (user_Id) => {
+        const dataSend = new FormData();
+        dataSend.append('user_Id', user_Id)
+
+        await axios
+        .post(Config.urlBackEnd + '/getUserWallet', dataSend)
+        .then(res => {            
+            console.log(user_Id)
+            console.log("asdas")
+            console.log(res.data)
+            if (res.data.response) {
+                setUserWallet(res.data.data[0])
+
+                navigation.setOptions({
+                    headerRight: () => (
+                    <View style={[styles.containerWallet, styles.shadow]}>
+                        <View style={styles.TrapezoidStyle}>
+                            <FontAwesome5 style={styles.iconCoin} name="coins" size={19} color="#efb810" />
+                        </View>
+                        <View style={styles.coinText}>
+        
+                            <Text style={styles.textMoney}>{res.data.data[0]?.coins}</Text>
+                        </View>
+                    </View>
+                    ),
+                });
+
+            } else {
+                console.log("Error al hacer el fecth con la wallet")
+            }
+        })
+    }
+    
+    React.useLayoutEffect(() => {
+        navigation.setOptions({
+            headerRight: () => (
+            <View style={[styles.containerWallet, styles.shadow]}>
+                <View style={styles.TrapezoidStyle}>
+                    <FontAwesome5 style={styles.iconCoin} name="coins" size={19} color="#efb810" />
+                </View>
+                <View style={styles.coinText}>
+
+                    <Text style={styles.textMoney}>{userWallet?.coins}</Text>
+                </View>
+            </View>
+            ),
+        });
+    }, [navigation]);     
 
     const handleAsync  = async() => {
         let dataAsync;
@@ -54,6 +108,7 @@ function Home({navigation, openModal}) {
 
         if(dataAsync){
             setUserId(JSON.parse(dataAsync)._id)
+            fetchUserWallet(JSON.parse(dataAsync)._id)   
         }
     }
 
@@ -152,6 +207,40 @@ function Home({navigation, openModal}) {
         })
     }
 
+    const getPayCourse = async (course) => {
+        const dataSend = new FormData();
+        dataSend.append('user_Id', userId);
+        dataSend.append('coursesId', course._id);
+        dataSend.append('typeService', course.typeService);
+        dataSend.append('priceCoin', course.price);
+
+        await axios
+        .post( Config.urlBackEnd + '/acquireCourse', dataSend)
+        .then(res => {
+            if (res.data.response) {
+                handleAsync()
+                Alert.alert(
+                    "Realizado",
+                    "El curso se ha añadido a su libreria",
+                    [
+                      { text: "OK", onPress: () => console.log("OK presionado") }
+                    ],
+                    { cancelable: false }
+                );
+            } else {
+                Alert.alert(
+                    "Error",
+                    res.data.message,
+                    [
+                      { text: "OK", onPress: () => console.log("OK presionado") }
+                    ],
+                    { cancelable: false }
+                );
+            }
+        })
+
+    }
+
     const close = () => {
         status = false
     }
@@ -162,6 +251,7 @@ function Home({navigation, openModal}) {
                 data={selected}
                 close={close}
                 getFreeCourse={getFreeCourse}
+                getPayCourse={getPayCourse}
             />
             <ScrollView
                 refreshControl={
@@ -206,6 +296,48 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         borderBottomRightRadius: 40,
         borderTopRightRadius: 5
+    },
+    containerWallet:{      
+        flexDirection: "row",
+        backgroundColor: "#fff",
+        marginTop: 5  ,
+        marginRight: 10,
+        // padding: 5,
+    },
+    iconCoin:{
+        marginTop: 2,
+        fontWeight: "bold",            
+    },
+    coinText:{
+      backgroundColor: "#fff",
+      paddingRight: 10,
+      justifyContent: "center",
+    },
+    textMoney: {
+        fontSize: 15,
+        fontWeight: "bold",
+        marginLeft: 5,      
+    },
+    TrapezoidStyle: {
+        width: 45,
+        height: 0,
+        borderBottomColor: Config.primaryColor,
+        borderBottomWidth: 25,
+        borderLeftWidth: 0,
+        borderRightWidth: 10,
+        borderRightColor: 'transparent',
+        borderLeftColor: 'transparent',
+        alignItems: "center",            
+    },
+    shadow: {
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 1,
+        shadowRadius: 3.84,
+        elevation: 4,           
     }
 })
 

@@ -111,6 +111,7 @@ export default function Lesson({route}) {
                     title={"Archivos".toUpperCase()}
                     data={() => 
                         <View>
+                            <Text>Not Ready yet</Text>
                             <TouchableOpacity onPress={() => downloadFile()}>
                                 <View style={styles.files}>
                                     <AntDesign style={styles.icon} name='pdffile1' size={30} color={Config.primaryColor} />

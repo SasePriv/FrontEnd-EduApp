@@ -1,4 +1,4 @@
-package com.frontendeduapp;
+package eduapp.arg;
 
 import android.os.Bundle;
 

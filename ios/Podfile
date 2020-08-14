@@ -43,4 +43,9 @@ target 'frontendeduApp' do
 
   # react-native-cli autolinking
   use_native_modules!
+
+
+
+  pod 'RNIap', :path => '../node_modules/react-native-iap'
+
 end

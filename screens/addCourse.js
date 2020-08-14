@@ -390,7 +390,10 @@ function AddCourses({navigation, openModal}) {
         data.append('category', formData.category)
         data.append('typeService', formData.typeService)
         data.append('hours', formData.hours)
-        data.append('price', formData.price)
+
+        const precioCoin = formData.price * 100
+
+        data.append('price', precioCoin)
         data.append('contador', formData.contador)
         data.append('imageUnique', {
             uri: formData.imageUnique,
@@ -546,7 +549,7 @@ function AddCourses({navigation, openModal}) {
                         </View>        
                     </View>
                     <View style={[styles.formGroup, formData.typeService == "free" && styles.formPrice]}>  
-                        <Text style={styles.labelText}>Precio</Text>
+                        <Text style={styles.labelText}>Precio en Pesos</Text>
                         <View style={styles.containerInput}>                                        
                             <FontAwesome5 name="money-bill-wave" style={styles.icon} size={24} color={Config.primaryColor} />
                             <TextInput

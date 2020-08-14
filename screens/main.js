@@ -44,7 +44,7 @@ export default function MyTabs() {
       activeColor="#fff"    
       barStyle={{ backgroundColor: Config.primaryColor }}
     >
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Conference"
         component={Login}
         options={{
@@ -54,9 +54,8 @@ export default function MyTabs() {
             <MaterialCommunityIcons name="video" color={color} size={27} />
           ),
         }}
-      />
-      {typeOfUser == "user" 
-      ?
+      /> */}
+      
       <Tab.Screen
         name="Courses"
         component={CoursesStack}
@@ -68,9 +67,7 @@ export default function MyTabs() {
           ),
         }}
       />
-      :
-      null
-      }
+      
       
       {typeOfUser == "teacher" 
       ? 

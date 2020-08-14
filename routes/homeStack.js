@@ -10,6 +10,7 @@ import { FontAwesome5 } from '@expo/vector-icons';
 const Stack = createStackNavigator();
 
 export default function HomeStack() {
+
     return (
             <Stack.Navigator
                 screenOptions={{
@@ -24,17 +25,15 @@ export default function HomeStack() {
                     component={Home}
                     options={{
                         headerTitleStyle: styles.headerTitle,
-                        headerRight: () => {
-                            return (
-                                <View style={[styles.containerWallet, styles.shadow]}>
-                                    <View style={styles.TrapezoidStyle}>
-                                        <FontAwesome5 style={styles.iconCoin} name="coins" size={20} color="#efb810" />
-                                    </View>
-                                    <View style={styles.coinText}>
-                                        <Text style={styles.textMoney}>1000</Text>
-                                    </View>
-                                </View>
-                            )
+                        title: "EL CULTIVO",
+                        headerTitleStyle: {
+                            fontWeight: "bold",
+                            textAlign: "center",
+                            width: 260,
+                            //backgroundColor: "green",
+                            justifyContent: "center",
+                            fontSize: 24,
+                            color: Config.primaryColor
                         },
                         headerLeft : () => {
                             return (
@@ -65,7 +64,7 @@ const styles = StyleSheet.create({
         // padding: 5,
     },
     iconCoin:{
-        marginTop: 3,
+        marginTop: 2,
         fontWeight: "bold",            
     },
     coinText:{
@@ -74,7 +73,7 @@ const styles = StyleSheet.create({
       justifyContent: "center",
     },
     textMoney: {
-        fontSize: 18,
+        fontSize: 15,
         fontWeight: "bold",
         marginLeft: 5,      
     },
@@ -92,7 +91,7 @@ const styles = StyleSheet.create({
         width: 45,
         height: 0,
         borderBottomColor: Config.primaryColor,
-        borderBottomWidth: 28,
+        borderBottomWidth: 25,
         borderLeftWidth: 0,
         borderRightWidth: 10,
         borderRightColor: 'transparent',
@@ -100,9 +99,10 @@ const styles = StyleSheet.create({
         alignItems: "center",            
     },
     logoLogin: {
-        width: 50,
-        height: 50,
-        marginLeft: 10
+        width: 45,
+        height: 45,
+        marginLeft: 10,
+        marginBottom: 5
         // margin: 10,
         // marginTop: 50,
         // marginBottom: 50

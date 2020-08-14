@@ -85,7 +85,7 @@ export default function Curso({ route ,navigation }) {
 
     const renderItem = ({item}) => {
         return(
-            <TouchableOpacity onPress={() => handleEachModuleAction(item._id)} style={[styles.moduloContainer, styles.shadow]}>
+            <TouchableOpacity /*onPress={() => handleEachModuleAction(item._id)}*/ style={[styles.moduloContainer, styles.shadow]}>
                 <Text style={styles.modulo}>MODULO: {item.title}</Text>                    
                 <AntDesign style={styles.icon} name='book' size={30} color={Config.primaryColor} />
             </TouchableOpacity>
@@ -119,11 +119,11 @@ export default function Curso({ route ,navigation }) {
                     <Text style={[styles.contentInfo, styles.readDescrip]}>{dataInfo.course?.description.slice(0, 100)+"..."}</Text>    
 
                     <View style={styles.CourseBtn}>
-                        <View style={styles.iconOptions}>
+                        {/* <View style={styles.iconOptions}>
                             <TouchableOpacity>
                                 <FontAwesome name="edit" size={50} color={Config.primaryColor} />
                             </TouchableOpacity>
-                        </View>
+                        </View> */}
                         <View style={styles.iconOptions}>
                             <TouchableOpacity onPress={handleEliminateCourse} >
                                 <AntDesign name="delete" size={46} color="red" />

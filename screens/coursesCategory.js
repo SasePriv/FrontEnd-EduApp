@@ -84,12 +84,79 @@ function CoursesCategory({openModal, action, route ,navigation }) {
         status = false
     }
 
+    const getFreeCourse = async(course) => {
+        const dataSend = new FormData();
+        dataSend.append('user_Id', userId);
+        dataSend.append('coursesId', course._id);
+        dataSend.append('typeService', course.typeService);
+
+        await axios
+        .post( Config.urlBackEnd + '/acquireCourse', dataSend)
+        .then(res => {
+            if (res.data.response) {
+                Alert.alert(
+                    "Realizado",
+                    "El curso se ha añadido a su libreria",
+                    [
+                      { text: "OK", onPress: () => console.log("OK presionado") }
+                    ],
+                    { cancelable: false }
+                );
+            } else {
+                Alert.alert(
+                    "Error",
+                    res.data.message,
+                    [
+                      { text: "OK", onPress: () => console.log("OK presionado") }
+                    ],
+                    { cancelable: false }
+                );
+            }
+        })
+    }
+
+    const getPayCourse = async (course) => {
+        const dataSend = new FormData();
+        dataSend.append('user_Id', userId);
+        dataSend.append('coursesId', course._id);
+        dataSend.append('typeService', course.typeService);
+        dataSend.append('priceCoin', course.price);
+
+        await axios
+        .post( Config.urlBackEnd + '/acquireCourse', dataSend)
+        .then(res => {
+            if (res.data.response) {
+                handleAsync()
+                Alert.alert(
+                    "Realizado",
+                    "El curso se ha añadido a su libreria",
+                    [
+                      { text: "OK", onPress: () => console.log("OK presionado") }
+                    ],
+                    { cancelable: false }
+                );
+            } else {
+                Alert.alert(
+                    "Error",
+                    res.data.message,
+                    [
+                      { text: "OK", onPress: () => console.log("OK presionado") }
+                    ],
+                    { cancelable: false }
+                );
+            }
+        })
+
+    }
+
     return(
         <View style={styles.container}>
 
             <CustomModal 
                 data={selected}
                 close={close}
+                getFreeCourse={getFreeCourse}
+                getPayCourse={getPayCourse}
             />
             {/* <ScrollView> */}
 

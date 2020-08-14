@@ -9,7 +9,7 @@ import Config from '../config'
 
 const screenHeight = Dimensions.get("window").height
 
-function CustomModal({action, CloseModal, data, close, getFreeCourse}){
+function CustomModal({action, CloseModal, data, close, getFreeCourse, getPayCourse}){
 
     const [top, setTop] = useState(new Animated.Value(screenHeight));
     const [expanded, setExpanded] = useState(true);
@@ -46,12 +46,11 @@ function CustomModal({action, CloseModal, data, close, getFreeCourse}){
         if (course.dataSelectedCourse.typeService == "free") {
             getFreeCourse(course.dataSelectedCourse)
         }else{
-            console.log("hola")
+            console.log("add")
+            getPayCourse(course.dataSelectedCourse)
         }
     }
  
-    console.log(data)
-
     return(
         <AnimatedContainer style={{ top: top }}>            
             <Container>
