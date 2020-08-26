@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, Button, Alert, Platform, TouchableOpacity, ScrollView} from 'react-native'
+import { StyleSheet, Text, View, Button, Alert, Platform, TouchableOpacity, ScrollView, PermissionsAndroid} from 'react-native'
 import { Video } from 'expo-av'
 import * as ScreenOrientation  from 'expo-screen-orientation';
 import Accordian from '../components/accordian'
 import {AntDesign} from "@expo/vector-icons"
 import {SingleImage} from 'react-native-zoom-lightbox';
 import axios from 'axios'
+import RNFetchBlob from 'rn-fetch-blob'
 import * as MediaLibrary from 'expo-media-library';
 import * as FileSystem from 'expo-file-system';
 import * as Permissions from 'expo-permissions';
@@ -39,17 +40,39 @@ export default function Lesson({route}) {
         })        
     }
 
-    const downloadFile = () =>{
-        const uri = "http://techslides.com/demos/sample-videos/small.mp4"
-        let fileUri = FileSystem.documentDirectory + "small.mp4";
-        FileSystem.downloadAsync(uri, fileUri)
-        .then(({ uri }) => {
-            saveFile(uri);
-          })
-          .catch(error => {
-            console.error(error);
-          })
+    const downloadFile = async (file) =>{
+        try {
+            const granted = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+              actualDownload(file);
+            } else {
+              Alert.alert('Permission Denied!', 'You need to give storage permission to download the file');
+            }
+          } catch (err) {
+            console.warn(err);
+          } 
     }
+
+    const actualDownload = (file) => {
+        const { dirs } = RNFetchBlob.fs;
+       RNFetchBlob.config({
+         fileCache: true,
+         addAndroidDownloads: {
+         useDownloadManager: true,
+         notification: true,
+         mediaScannable: true,
+         title: `${file.nameOfFile}.pdf`,
+         path: `${dirs.DownloadDir}/${file.nameOfFile}.pdf`,
+         },
+       })
+         .fetch('GET', Config.urlBackEnd + "/moduleFiles/" +  file.attachment, {})
+         .then((res) => {
+           console.log('The file saved to ', res.path());
+         })
+         .catch((e) => {
+           console.log("error",e)
+         });
+     }
 
     const saveFile = async (fileUri) => {
         const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
@@ -108,21 +131,25 @@ export default function Lesson({route}) {
                         <Text>{dataLesson?.contentText}</Text>                            
                     }
                 />
+                
                 <Accordian 
                     title={"Archivos".toUpperCase()}
                     data={() => 
                         <View>
-                            <Text>Not Ready yet</Text>
-                            <TouchableOpacity onPress={() => downloadFile()}>
-                                <View style={styles.files}>
-                                    <AntDesign style={styles.icon} name='pdffile1' size={30} color={Config.primaryColor} />
-                                    <Text style={styles.textFile}>Notas Musicales</Text>
-                                </View>
-                            </TouchableOpacity>
-                            <View style={styles.files}>
-                                <AntDesign style={styles.icon} name='pdffile1' size={30} color={Config.primaryColor} />
-                                <Text style={styles.textFile}>Teclado Notas 1</Text>
-                            </View>
+                            {dataAttachtment?.map(item => {
+                                if(item?.type_of_Attachment == "file"){
+                                    console.log(item);
+                                    return(
+                                        <TouchableOpacity onPress={() => downloadFile(item)}>
+                                            <View style={styles.files}>
+                                                <AntDesign style={styles.icon} name='pdffile1' size={30} color={Config.primaryColor} />
+                                                <Text style={styles.textFile}>{item.nameOfFile}</Text>
+                                            </View>
+                                        </TouchableOpacity>
+                                    )    
+                                }
+                            })}
+    
                         </View>
                     }
                 />

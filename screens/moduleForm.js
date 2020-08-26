@@ -171,7 +171,7 @@ export default function ModuleForm({route, navigation}){
                     dataSend.append('moduleId', moduleId);                                 
                     dataSend.append(`fileUnique`, {
                         uri: result.uri,
-                        name: `${result.name}.${typeFile}`,
+                        name: `${result.name}`,
                         type: `file/${typeFile}`
                     })
 
@@ -519,7 +519,7 @@ export default function ModuleForm({route, navigation}){
                     console.log(element)
                     data.append(`file${contFiles}`, {
                         uri: element.uri,
-                        name: `${element.name}.${typeFile}`,
+                        name: `${element.name}`,
                         type: `file/${typeFile}`
                     })
                     contFiles ++;
