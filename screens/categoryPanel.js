@@ -4,6 +4,7 @@ import axios from 'axios'
 import { AntDesign } from '@expo/vector-icons'; 
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
+import Config from '../config'
 
 
 export default function CategoryPanel() {
@@ -28,7 +29,7 @@ export default function CategoryPanel() {
 
     const fetchData = async () => {
         await axios
-        .get('http://10.0.2.2:4000/getAllCategory')
+        .get( Config.urlBackEnd + '/getAllCategory')
         .then(res => {
             if (res.data.response) {  
                 const dataRecived = res.data.data.reverse()              
@@ -86,7 +87,7 @@ export default function CategoryPanel() {
             })
 
             await axios
-            .post('http://10.0.2.2:4000/addNewCategory', dataSend)
+            .post( Config.urlBackEnd + '/addNewCategory', dataSend)
             .then(res =>{
                 if (res.data.response) {
                     fetchData();
@@ -135,7 +136,7 @@ export default function CategoryPanel() {
         dataSend.append('categoryId', id);
 
         await axios
-        .post('http://10.0.2.2:4000/eliminateOneCategory', dataSend)
+        .post( Config.urlBackEnd + '/eliminateOneCategory', dataSend)
         .then(res => {
             if (res.data.response) {
                 fetchData();
@@ -187,11 +188,11 @@ export default function CategoryPanel() {
                         onChangeText={text => setTitleNew(text)}
                         value={titleNew}
                         style={[styles.input, errorTitle ? styles.errorInput : null]}                
-                        selectionColor="#0080ff"
+                        selectionColor={Config.primaryColor}
                         placeholder="Titulo"                                
                     />
                     <View style={styles.btnAddCategory}>
-                        <Button onPress={handleAddCategory} color={"#0080ff"} title={"Añadir Categoria"} /> 
+                        <Button onPress={handleAddCategory} color={Config.primaryColor} title={"Añadir Categoria"} /> 
                     </View>
                 </View>
                 
@@ -216,7 +217,7 @@ export default function CategoryPanel() {
                         return (
                             <View style={styles.row} key={index}>
                                 <View style={styles.fristCol}>
-                                    <Image resizeMode="cover" style={styles.imageCategory} source={{uri: 'http://192.168.1.2:4000//categoryImages/' + item.mainImage}} />
+                                    <Image resizeMode="cover" style={styles.imageCategory} source={{uri: Config.urlBackEnd + '//categoryImages/' + item.mainImage}} />
                                     <View style={styles.textContainer}>
                                         <Text style={styles.textBodyTable}>{item.title}</Text>                        
                                     </View>
@@ -231,7 +232,7 @@ export default function CategoryPanel() {
                         return (
                             <View style={styles.row2} key={index}>
                                 <View style={styles.fristCol}>
-                                <Image resizeMode="cover" style={styles.imageCategory} source={{uri: 'http://192.168.1.2:4000//categoryImages/' + item.mainImage}} />
+                                <Image resizeMode="cover" style={styles.imageCategory} source={{uri: Config.urlBackEnd + '//categoryImages/' + item.mainImage}} />
                                     <View style={styles.textContainer}>
                                         <Text style={styles.textBodyTable}>{item.title}</Text>                           
                                     </View>
@@ -287,7 +288,7 @@ const styles = StyleSheet.create({
         paddingTop: 5,
         paddingBottom: 5,
         marginTop: 10,
-        backgroundColor: "#0080ff",
+        backgroundColor: Config.primaryColor,
         width: 270,
         color: "white",
         fontWeight: "bold",
@@ -379,7 +380,7 @@ const styles = StyleSheet.create({
     input:{
         borderBottomWidth: 2,
         fontSize: 15,
-        borderBottomColor: "#0080ff"
+        borderBottomColor: Config.primaryColor
     },
     boxAdd:{
         flex: 1,
@@ -389,7 +390,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         textAlign: "center",
         fontWeight: "bold",
-        color: "#0080ff"
+        color: Config.primaryColor
     },
     btnAddCategory:{
         marginTop: 15,

@@ -9,6 +9,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { MaterialIcons } from '@expo/vector-icons'; 
 import { Video } from 'expo-av'
 import { AntDesign } from '@expo/vector-icons'; 
+import Config from '../config'
 
 
 
@@ -59,12 +60,12 @@ export default function CustomModalModule(){
                     <View style={[styles.formGroup, styles.formGroupFrist]}>  
                         <Text style={styles.labelText}>Titulo del Modulo</Text>
                         <View style={styles.containerInput}>                    
-                            <MaterialCommunityIcons style={styles.icon} name="format-title" size={24} color="#0080ff" />
+                            <MaterialCommunityIcons style={styles.icon} name="format-title" size={24} color={Config.primaryColor} />
                             <TextInput
                                 onChangeText={(text) => handlteTitle(text)}
                                 value={moduleData?.title}
                                 style={[styles.input]}                
-                                selectionColor="#0080ff"
+                                selectionColor={Config.primaryColor}
                                 placeholder="Titulo"                                                                
                             />
                         </View>        
@@ -72,12 +73,12 @@ export default function CustomModalModule(){
                     <View style={styles.formGroup}>  
                         <Text style={styles.labelText}>Contenido del Modulo</Text>
                         <View style={styles.containerInput}>                                            
-                            <MaterialIcons name="description" style={[styles.icon, styles.descriptionIcon]} size={24} color="#0080ff" />
+                            <MaterialIcons name="description" style={[styles.icon, styles.descriptionIcon]} size={24} color={Config.primaryColor} />
                             <TextInput
                                 onChangeText={text => setFormModule({...formModule,content: text})}
                                 value={formModule.content}
                                 style={[styles.input]}                
-                                selectionColor="#0080ff"
+                                selectionColor={Config.primaryColor}
                                 placeholder="Correo"     
                                 multiline={true}
                                 numberOfLines={5}                           
@@ -88,7 +89,7 @@ export default function CustomModalModule(){
                     <View style={[styles.formGroup]}>  
                         <Text style={styles.labelText}>Tipo del Servicio</Text>
                         <View style={[styles.containerInput, styles.getVideo]}>                                                                                                
-                            <AntDesign name="videocamera"  style={styles.icon} size={24} color="#0080ff" />
+                            <AntDesign name="videocamera"  style={styles.icon} size={24} color={Config.primaryColor} />
                             <Text style={styles.titleCheck}>Url Video</Text>
                             <Checkbox
                                 status={formModule.typeVideo == "url" ? 'checked' : 'unchecked'}
@@ -109,7 +110,7 @@ export default function CustomModalModule(){
                                 onChangeText={text => setFormModule({...formModule,urlvideo: text})}
                                 value={formModule.urlvideo}
                                 style={[styles.input]}                
-                                selectionColor="#0080ff"
+                                selectionColor={Config.primaryColor}
                                 placeholder="Url"                             
                             />
                         </View>        
@@ -160,7 +161,7 @@ export default function CustomModalModule(){
                         style={styles.btnClose}
                     >
                         <CloseView style={{ elevation: 10 }}>
-                            <Icon.Ionicons name='ios-close' size={44} color='#0080ff' />
+                            <Icon.Ionicons name='ios-close' size={44} color={Config.primaryColor} />
                         </CloseView>
                     </TouchableOpacity>   
 
@@ -251,7 +252,7 @@ const styles = StyleSheet.create({
     },
     cajaSave: {
         height: 50,
-        backgroundColor:  "#0080ff",
+        backgroundColor: Config.primaryColor,
         justifyContent: "center",
         alignItems: "center",
         borderRadius: 10,

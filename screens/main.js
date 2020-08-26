@@ -10,6 +10,7 @@ import AddOptionStack from '../routes/addOptionStack'
 import AdminStack from '../routes/adminStack'
 import AsyncStorage from '@react-native-community/async-storage';
 import ProfileStack from '../routes/profileStack'
+import Config from '../config'
 
 
 const Tab = createMaterialBottomTabNavigator();
@@ -41,9 +42,9 @@ export default function MyTabs() {
     <Tab.Navigator
       initialRouteName="Home"
       activeColor="#fff"    
-      barStyle={{ backgroundColor: '#0080ff' }}
+      barStyle={{ backgroundColor: Config.primaryColor }}
     >
-      <Tab.Screen
+      {/* <Tab.Screen
         name="Conference"
         component={Login}
         options={{
@@ -53,9 +54,8 @@ export default function MyTabs() {
             <MaterialCommunityIcons name="video" color={color} size={27} />
           ),
         }}
-      />
-      {typeOfUser == "user" 
-      ?
+      /> */}
+      
       <Tab.Screen
         name="Courses"
         component={CoursesStack}
@@ -67,9 +67,7 @@ export default function MyTabs() {
           ),
         }}
       />
-      :
-      null
-      }
+      
       
       {typeOfUser == "teacher" 
       ? 

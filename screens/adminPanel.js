@@ -1,6 +1,7 @@
 import React from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { FontAwesome5 } from '@expo/vector-icons'; 
+import Config from '../config'
 
 export default function AdminPanel({navigation}) {
 
@@ -26,7 +27,7 @@ export default function AdminPanel({navigation}) {
             <View style={[styles.cardBlue, styles.shadow, styles.cardWhite]}>
                 <Text style={[styles.subTitle, styles.blueText]}>Administrador</Text>
                 <Text style={[styles.subTitle, styles.blueText]}>de Categorias</Text>
-                <FontAwesome5 style={styles.icon} name="chalkboard-teacher" size={50} color="#0080ff" />
+                <FontAwesome5 style={styles.icon} name="chalkboard-teacher" size={50} color={Config.primaryColor} />
             </View>
             </TouchableOpacity>
 
@@ -44,7 +45,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold"
     },
     cardBlue:{
-        backgroundColor: '#0080ff',
+        backgroundColor: Config.primaryColor,
         height: 250,
         margin: 30,
         borderRadius: 20,
@@ -69,6 +70,6 @@ const styles = StyleSheet.create({
         backgroundColor: "white"
     },
     blueText: {
-        color: '#0080ff',
+        color: Config.primaryColor,
     }
 })

@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, LayoutAnimation, Platform, UIManager} from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
+import Config from '../config'
 
 export default class Accordian extends Component{
 
@@ -59,7 +60,7 @@ const styles = StyleSheet.create({
     title:{
         fontSize: 14,
         fontWeight:'bold',
-        color: "#0080ff",
+        color: Config.primaryColor,
     },
     row:{
         flexDirection: 'row',
@@ -84,11 +85,11 @@ const styles = StyleSheet.create({
         marginHorizontal: 20,
         borderBottomLeftRadius: 10,
         borderBottomRightRadius: 10,
-        borderColor: "#0080ff",
+        borderColor: Config.primaryColor,
         borderTopWidth: 3
     },
     conta: {
-        backgroundColor: "#0080ff",
+        backgroundColor: Config.primaryColor,
         width: 50,
         height: 40,
         alignItems: "center",

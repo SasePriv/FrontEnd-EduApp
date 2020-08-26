@@ -1,11 +1,12 @@
 import React, {useState, useEffect} from 'react'
-import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native'
+import { StyleSheet, Text, View, Image, ScrollView, TouchableOpacity, FlatList, ActivityIndicator, Alert } from 'react-native'
 import { Divider } from 'react-native-paper';
 import {AntDesign} from "@expo/vector-icons"
 import { useSafeArea } from 'react-native-safe-area-context';
 import { FontAwesome } from '@expo/vector-icons'; 
 import axios from 'axios'
 import { HeaderBackButton } from '@react-navigation/stack'; 
+import Config from '../config'
 
 export default function Curso({ route ,navigation }) {
 
@@ -18,6 +19,13 @@ export default function Curso({ route ,navigation }) {
         setCourse_Id(coursesId)
         fetchCourseData(coursesId)        
     },[])
+
+    useEffect(() => {
+        const refreshUserData = navigation.addListener('focus', () => {
+            const { coursesId } =  route.params;
+            fetchCourseData(coursesId);   
+          });
+    }, [navigation])
 
     navigation.setOptions({
         headerLeft: (props) => (
@@ -36,7 +44,7 @@ export default function Curso({ route ,navigation }) {
 
         try {
             await axios
-            .post('http://192.168.1.2:4000/getSingleCourse', dataForm)
+            .post( Config.urlBackEnd + '/getSingleCourse', dataForm)
             .then(res => {
                 if (res.data.response) {
                     console.log(res.data)
@@ -59,17 +67,74 @@ export default function Curso({ route ,navigation }) {
         navigation.navigate('ModuleForm', {coursesId: course_id, moduleId})
     }
 
+    const handleEditCourse = () => {
+        navigation.navigate('Añadir Curso', {coursesId: course_id})
+    }
+
+    const eliminateCourse = () => {
+        Alert.alert(
+            "Confirmacion",
+            "¿Estas seguro de eliminar el curso?",
+            [
+            {
+                text: "Cancelar",
+                onPress: () => console.log("Cancel Pressed"),
+                style: "cancel"
+            },
+            { text: "SI", onPress: () => handleEliminateCourse() }
+            ],
+            { cancelable: false }
+        );
+    }
     const handleEliminateCourse = async() => {
         const dataSend = new FormData();
         dataSend.append('courseId', course_id);
 
         await axios
-        .post('http://192.168.1.2:4000/eliminateCourse', dataSend)
+        .post( Config.urlBackEnd + '/eliminateCourse', dataSend)
         .then(res => {
             if (res.data.response) {
                 navigation.navigate('Nueva Opcion')
             }else{
                 console.log(res.data.message)
+            }
+        })
+    }
+
+    const eliminateModule = (moduleId) => {
+        Alert.alert(
+            "Confirmacion",
+            "¿Estas seguro de eliminar este modulo?",
+            [
+            {
+                text: "Cancelar",
+                onPress: () => console.log("Cancel Pressed"),
+                style: "cancel"
+            },
+            { text: "SI", onPress: () => handleEliminateModule(moduleId) }
+            ],
+            { cancelable: false }
+        );
+    }
+
+    const handleEliminateModule = async(moduleId) => {
+        const dataSend = new FormData();
+        dataSend.append('moduleId', moduleId);
+
+        await axios
+        .post( Config.urlBackEnd + "/eliminateModule", dataSend)
+        .then(res => {
+            if (res.data.response) {
+                fetchCourseData(course_id);  
+            } else {
+                Alert.alert(
+                    "Error",
+                    res.data.message,
+                    [
+                    { text: "OK", onPress: () => console.log("OK presionado") }
+                    ],
+                    { cancelable: false }
+                ); 
             }
         })
     }
@@ -84,10 +149,24 @@ export default function Curso({ route ,navigation }) {
 
     const renderItem = ({item}) => {
         return(
-            <TouchableOpacity onPress={() => handleEachModuleAction(item._id)} style={[styles.moduloContainer, styles.shadow]}>
-                <Text style={styles.modulo}>MODULO: {item.title}</Text>                    
-                <AntDesign style={styles.icon} name='book' size={30} color='#0080ff' />
-            </TouchableOpacity>
+            <View style={{flexDirection: "row"}}>
+                <View /*onPress={() => handleEachModuleAction(item._id)}*/ style={[styles.containerModules]}>
+                    <View style={[styles.moduloContainer, styles.shadow]}>
+                        <Text style={styles.modulo}>MODULO: {item.title}</Text>
+                        <View style={{flexDirection: "row", marginRight: 5}}>
+                            <TouchableOpacity onPress={() => handleEachModuleAction(item._id)}>
+                                <View styles={styles.iconContainer}>
+                                    <AntDesign style={styles.icon} name='edit' size={40} color={Config.primaryColor} />                                                              
+                                </View>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={() => eliminateModule(item._id)}>
+                                <AntDesign style={styles.icon} name='delete' size={40} color={Config.primaryColor} />                      
+                            </TouchableOpacity>
+                        </View>
+                    </View>    
+
+                </View>
+            </View>
         )
     }
 
@@ -102,11 +181,11 @@ export default function Curso({ route ,navigation }) {
                 <Image 
                     resizeMode="cover" 
                     style={styles.imageMain} 
-                    source={{uri: 'http://192.168.1.2:4000//coursesImages/'+dataInfo.course?.mainImage}} 
+                    source={{uri: Config.urlBackEnd + '//coursesImages/'+dataInfo.course?.mainImage}} 
                 />
                 <View style={styles.hoverBack}>
                     <View style={styles.containerImage}>                                
-                        <Image resizeMode="cover" style={styles.contentContainer} source={{uri: 'http://192.168.1.2:4000//profileImages/'+dataInfo.userInfo?.profile_image}} />
+                        <Image resizeMode="cover" style={styles.contentContainer} source={{uri: Config.urlBackEnd + '//profileImages/'+dataInfo.userInfo?.profile_image}} />
                     </View>
                     <Text style={[styles.descripCard, styles.other]}>{"Profesor".toUpperCase()}</Text> 
                     <Text style={styles.descripCard}>{dataInfo.userInfo?.name}</Text>       
@@ -119,12 +198,12 @@ export default function Curso({ route ,navigation }) {
 
                     <View style={styles.CourseBtn}>
                         <View style={styles.iconOptions}>
-                            <TouchableOpacity>
-                                <FontAwesome name="edit" size={50} color="#0080ff" />
+                            <TouchableOpacity onPress={handleEditCourse}>
+                                <FontAwesome name="edit" size={50} color={Config.primaryColor} />
                             </TouchableOpacity>
                         </View>
                         <View style={styles.iconOptions}>
-                            <TouchableOpacity onPress={handleEliminateCourse} >
+                            <TouchableOpacity onPress={eliminateCourse} >
                                 <AntDesign name="delete" size={46} color="red" />
                             </TouchableOpacity>
                         </View>
@@ -137,7 +216,7 @@ export default function Curso({ route ,navigation }) {
             <View style={{alignItems: "center"}}>                    
                 <TouchableOpacity onPress={onPress}>  
                     <View style={[styles.addModule, styles.shadow]}>
-                        <AntDesign name="pluscircle" size={30} color="#0080ff" />
+                        <AntDesign name="pluscircle" size={30} color={Config.primaryColor}  />
                     </View>                                        
                 </TouchableOpacity>
                 <FlatList 
@@ -194,7 +273,7 @@ const styles = StyleSheet.create({
     },
     hoverBack: {
         position: "absolute",
-        backgroundColor: "rgba(0, 128, 255, 0.5)",
+        backgroundColor: "rgba(229, 90, 91, 0.5)",
         width: 150,
         height: 220,
         justifyContent: "center",        
@@ -231,7 +310,7 @@ const styles = StyleSheet.create({
     },
     viewMore: {
         textAlign: "center",
-        color: "#0080ff",
+        color: Config.primaryColor,
         fontWeight: "bold", 
         paddingTop: 7       
     },
@@ -239,7 +318,7 @@ const styles = StyleSheet.create({
         width: "100%",
         backgroundColor: "white",
         marginTop: 10,
-        color: "#0080ff",
+        color: Config.primaryColor,
         textAlign: "center",
         fontSize: 20,
         fontWeight: "bold",
@@ -248,12 +327,13 @@ const styles = StyleSheet.create({
         marginBottom: 5      
     },
     moduloContainer: {
-        width: "95%",
+        width: "100%",
         backgroundColor: "white",
         borderRadius: 5,
-        marginBottom: 1,
+        marginBottom: 5,
         flexDirection: "row",
-        justifyContent: "space-between",        
+        justifyContent: "space-between",    
+        margin: 5    
     },
     addModule: {
         width: "100%",
@@ -268,10 +348,14 @@ const styles = StyleSheet.create({
     modulo: {
         padding: 15,
         fontSize: 14,
-        fontWeight: "bold",        
+        fontWeight: "bold", 
+        width: "70%"       
+        // marginTop: 30    
     },
     icon: {
-        padding: 5
+        padding: 5,
+        paddingTop: 8,
+        paddingRight: 0,
     },
     list: {
         width: "100%",
@@ -289,5 +373,21 @@ const styles = StyleSheet.create({
     },
     iconOptions: {
         paddingHorizontal: 10
+    },
+    options: {
+        padding: 5,
+        flexDirection: "row",
+        marginRight: 10  ,
+        backgroundColor: "#ffffff",
+        width: 200,
+        height: 200
+    },
+    containerModules:{
+        width: "94%",
+        flexDirection: "row",
+        justifyContent: "space-between",        
+    },
+    iconContainer:{
+        backgroundColor: "#ffffff",        
     }
 })

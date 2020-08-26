@@ -4,8 +4,9 @@ import { Divider } from 'react-native-paper';
 import {AntDesign} from "@expo/vector-icons"
 import axios from 'axios'
 import { FlatList } from 'react-native-gesture-handler';
+import Config from '../config'
 
-const ejemplo = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. In fermentum accumsan viverra. Aliquam ornare pellentesque malesuada. Sed ut neque eu urna sagittis pellentesque eu ut sapien. Suspendisse laoreet semper dolor at ultrices. In hac habitasse platea dictumst. Mauris lacinia neque vel turpis consectetur, at aliquet nibh rutrum"
+
 
 export default function Curso({route, navigation }) {
 
@@ -24,7 +25,7 @@ export default function Curso({route, navigation }) {
         dataSend.append('coursesId', courseId);
 
         await axios
-        .post('http://192.168.1.4:4000/getAllModulesOfCourse', dataSend)
+        .post( Config.urlBackEnd + '/getAllModulesOfCourse', dataSend)
         .then(res => {
             console.log("Moduel",res.data)
             if (res.data.response) {
@@ -35,8 +36,6 @@ export default function Curso({route, navigation }) {
             }
         })
     }
-
-    console.log("Modulitos",modules)
 
     const onPress = (item) => {
         navigation.navigate('Lesson', {module: item})
@@ -55,11 +54,11 @@ export default function Curso({route, navigation }) {
                 <Image 
                     resizeMode="cover" 
                     style={styles.imageMain} 
-                    source={{uri: 'http://192.168.1.4:4000//coursesImages/' + courseData?.course?.mainImage}} 
+                    source={{uri: Config.urlBackEnd + '//coursesImages/' + courseData?.course?.mainImage}} 
                 />
                 <View style={styles.hoverBack}>
                     <View style={styles.containerImage}>                                
-                        <Image resizeMode="cover" style={styles.contentContainer} source={{uri: 'http://192.168.1.4:4000//profileImages/' + courseData?.userInfo?.profile_image}} />
+                        <Image resizeMode="cover" style={styles.contentContainer} source={{uri: Config.urlBackEnd + '//profileImages/' + courseData?.userInfo?.profile_image}} />
                     </View>
                     <Text style={[styles.descripCard, styles.other]}>{"Profesor".toUpperCase()}</Text> 
                     <Text style={styles.descripCard}>{courseData?.userInfo?.name}</Text>       
@@ -79,7 +78,7 @@ export default function Curso({route, navigation }) {
                         renderItem={ ({item, index}) =>                                                
                         <TouchableOpacity onPress={() => onPress(item)} style={[styles.moduloContainer, styles.shadow]}>
                             <Text style={styles.modulo}>MODULO {index + 1}: {item.title}</Text>                    
-                            <AntDesign style={styles.icon} name='book' size={30} color='#0080ff' />
+                            <AntDesign style={styles.icon} name='book' size={30} color={Config.primaryColor} />
                         </TouchableOpacity>                                     
                         }
                     />                              
@@ -130,7 +129,7 @@ const styles = StyleSheet.create({
     },
     hoverBack: {
         position: "absolute",
-        backgroundColor: "rgba(0, 128, 255, 0.5)",
+        backgroundColor: "rgba(229, 90, 91, 0.5)",
         width: 150,
         height: 220,
         justifyContent: "center",        
@@ -167,7 +166,7 @@ const styles = StyleSheet.create({
     },
     viewMore: {
         textAlign: "center",
-        color: "#0080ff",
+        color: Config.primaryColor,
         fontWeight: "bold", 
         paddingTop: 7       
     },
@@ -175,7 +174,7 @@ const styles = StyleSheet.create({
         width: "100%",
         backgroundColor: "white",
         marginTop: 10,
-        color: "#0080ff",
+        color: Config.primaryColor,
         textAlign: "center",
         fontSize: 20,
         fontWeight: "bold",

@@ -6,6 +6,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import { FontAwesome } from '@expo/vector-icons'; 
 import axios from 'axios'
+import Config from '../config'
 
 import { AuthContext } from '../components/context'
 
@@ -94,7 +95,7 @@ export default function RegisterScreen({navigation}) {
             dataSend.append('name', form.name)
 
             await axios
-            .post('http://192.168.1.2:4000/register', dataSend)
+            .post(Config.urlBackEnd + '/register', dataSend)
             .then(async res => {
                 console.log(res.data)
                 if (res.data.response) {
@@ -251,12 +252,12 @@ export default function RegisterScreen({navigation}) {
             <View style={[styles.cardContainer,]}>
                 <Text style={styles.labelText}>Correo</Text>
                 <View style={styles.containerInput}>                    
-                    <MaterialCommunityIcons style={styles.icon} name="email" size={24} color="#0080ff" />
+                    <MaterialCommunityIcons style={styles.icon} name="email" size={24} color={Config.primaryColor} />
                     <TextInput
                         onChangeText={text => setForm({...form,email: text})}
                         value={form.email}
                         style={[styles.input]}                
-                        selectionColor="#0080ff"
+                        selectionColor={Config.urlBackEnd}
                         placeholder="Correo"                                
                     />
                 </View>
@@ -270,12 +271,12 @@ export default function RegisterScreen({navigation}) {
 
                 <Text style={styles.labelText}>Nombre</Text>
                 <View style={styles.containerInput}>
-                    <AntDesign name="user" size={24} style={styles.icon} color="#0080ff" />
+                    <AntDesign name="user" size={24} style={styles.icon} color={Config.primaryColor} />
                     <TextInput
                         onChangeText={text => setForm({...form,name: text})}
                         value={form.name}
                         style={[styles.input]}                
-                        selectionColor="#0080ff"
+                        selectionColor={Config.primaryColor}
                         placeholder="Nombre"                                
                     />
                 </View>
@@ -289,7 +290,7 @@ export default function RegisterScreen({navigation}) {
 
                 <Text style={styles.labelText}>Fecha de Nacimiento</Text>
                 <View style={styles.containerInput}>
-                    <AntDesign name="calendar" size={24} style={styles.icon} color="#0080ff" />
+                    <AntDesign name="calendar" size={24} style={styles.icon} color={Config.primaryColor} />
                     <TouchableOpacity onPress={showDatePicker} style={{width: "100%"}}>
                         <Text style={styles.textLikeInput}>{form.fecha}</Text>
                     </TouchableOpacity>
@@ -304,7 +305,7 @@ export default function RegisterScreen({navigation}) {
 
                 <Text style={styles.labelText}>Sexo</Text>
                 <View style={styles.containerInput}>                    
-                    <FontAwesome name="intersex" size={24} style={styles.icon} color="#0080ff" />
+                    <FontAwesome name="intersex" size={24} style={styles.icon} color={Config.primaryColor} />
                     <DropDownPicker
                         items={items}
                         defaultValue={form.gender}
@@ -320,7 +321,7 @@ export default function RegisterScreen({navigation}) {
                 </View>
                 <Text style={styles.labelText}>Tipo de Cuenta</Text>
                 <View style={styles.containerInput}>                    
-                    <MaterialCommunityIcons name="account-badge-horizontal-outline" size={24} style={styles.icon} color="#0080ff"/>
+                    <MaterialCommunityIcons name="account-badge-horizontal-outline" size={24} style={styles.icon} color={Config.primaryColor}/>
                     <DropDownPicker
                         items={items2}
                         defaultValue={form.accountType}
@@ -344,24 +345,24 @@ export default function RegisterScreen({navigation}) {
 
                 <Text style={styles.labelText}>Contraseña</Text>
                 <View style={styles.containerInput}>
-                    <AntDesign name="lock" size={24} style={styles.icon} color="#0080ff" />
+                    <AntDesign name="lock" size={24} style={styles.icon} color={Config.primaryColor} />
                     <TextInput
                         onChangeText={text => setForm({...form,password: text})}
                         value={form.password}
                         style={[styles.input]}                
-                        selectionColor="#0080ff"
+                        selectionColor={Config.primaryColor}
                         placeholder="Contraseña"   
                         secureTextEntry={true}                             
                     />
                 </View>
                 <Text style={styles.labelText}>Confirmar Contraseña</Text>
                 <View style={styles.containerInput}>
-                    <AntDesign name="lock" size={24} style={styles.icon} color="#0080ff" />
+                    <AntDesign name="lock" size={24} style={styles.icon} color={Config.primaryColor} />
                     <TextInput
                         onChangeText={text => setForm({...form,confirmation_pass: text})}
                         value={form.confirmation_pass}
                         style={[styles.input]}                
-                        selectionColor="#0080ff"
+                        selectionColor={Config.primaryColor}
                         placeholder="Repetir Contraseña"   
                         secureTextEntry={true}                             
                     />
@@ -404,7 +405,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: "#0080ff",
+        backgroundColor: Config.primaryColor,
         // alignItems: "center",        
     },
     cardContainer: {

@@ -4,6 +4,7 @@ import { connect } from "react-redux"
 import CustomModal from './customModal'
 import { Searchbar , Card} from 'react-native-paper';
 import axios from 'axios'
+import Config from '../config'
 
 // let selected = ""
 let status = false
@@ -17,11 +18,27 @@ function CoursesCategory({openModal, action, route ,navigation }) {
 
     const [selected, setSelected] = useState(null)
 
+    const [userId, setUserId] = useState(null)
+
     useEffect(() => {
         const { category } = route.params;
         setCategoryTitle(category);
         fetchCategoryData(category)
+        handleAsync()
     },[])
+
+    const handleAsync  = async() => {
+        let dataAsync;
+        try {
+            dataAsync = await AsyncStorage.getItem('userData')
+        } catch (error) {
+            console.log(error)
+        }
+
+        if(dataAsync){
+            setUserId(JSON.parse(dataAsync)._id)  
+        }
+    }
 
     const fetchCategoryData = async (category) => {
 
@@ -29,7 +46,7 @@ function CoursesCategory({openModal, action, route ,navigation }) {
         dataSend.append('categoryTitle', category);
 
         await axios
-        .post('http://10.0.2.2:4000/getAllCoursesOfCategory', dataSend)
+        .post( Config.urlBackEnd + '/getAllCoursesOfCategory', dataSend)
         .then(res => {
             if (res.data.response) {
                 setInfo(res.data.data)
@@ -48,7 +65,7 @@ function CoursesCategory({openModal, action, route ,navigation }) {
         dataSend.append('courseId', informacion.course._id)
 
         await axios
-        .post('http://10.0.2.2:4000/getAttachmentsOfCourse', dataSend)
+        .post( Config.urlBackEnd + '/getAttachmentsOfCourse', dataSend)
         .then(res => {
             // console.log(res.data)
             if (res.data.response) {
@@ -59,7 +76,7 @@ function CoursesCategory({openModal, action, route ,navigation }) {
         })
 
         await axios
-        .post('http://10.0.2.2:4000/getNamesModulesOfCourse', dataSend)
+        .post( Config.urlBackEnd + '/getNamesModulesOfCourse', dataSend)
         .then(res => {
             console.log(res.data)
             if (res.data.response) {
@@ -83,12 +100,79 @@ function CoursesCategory({openModal, action, route ,navigation }) {
         status = false
     }
 
+    const getFreeCourse = async(course) => {
+        const dataSend = new FormData();
+        dataSend.append('user_Id', userId);
+        dataSend.append('coursesId', course._id);
+        dataSend.append('typeService', course.typeService);
+
+        await axios
+        .post( Config.urlBackEnd + '/acquireCourse', dataSend)
+        .then(res => {
+            if (res.data.response) {
+                Alert.alert(
+                    "Realizado",
+                    "El curso se ha añadido a su libreria",
+                    [
+                      { text: "OK", onPress: () => console.log("OK presionado") }
+                    ],
+                    { cancelable: false }
+                );
+            } else {
+                Alert.alert(
+                    "Error",
+                    res.data.message,
+                    [
+                      { text: "OK", onPress: () => console.log("OK presionado") }
+                    ],
+                    { cancelable: false }
+                );
+            }
+        })
+    }
+
+    const getPayCourse = async (course) => {
+        const dataSend = new FormData();
+        dataSend.append('user_Id', userId);
+        dataSend.append('coursesId', course._id);
+        dataSend.append('typeService', course.typeService);
+        dataSend.append('priceCoin', course.price);
+
+        await axios
+        .post( Config.urlBackEnd + '/acquireCourse', dataSend)
+        .then(res => {
+            if (res.data.response) {
+                handleAsync()
+                Alert.alert(
+                    "Realizado",
+                    "El curso se ha añadido a su libreria",
+                    [
+                      { text: "OK", onPress: () => console.log("OK presionado") }
+                    ],
+                    { cancelable: false }
+                );
+            } else {
+                Alert.alert(
+                    "Error",
+                    res.data.message,
+                    [
+                      { text: "OK", onPress: () => console.log("OK presionado") }
+                    ],
+                    { cancelable: false }
+                );
+            }
+        })
+
+    }
+
     return(
         <View style={styles.container}>
 
             <CustomModal 
                 data={selected}
                 close={close}
+                getFreeCourse={getFreeCourse}
+                getPayCourse={getPayCourse}
             />
             {/* <ScrollView> */}
 
@@ -120,7 +204,7 @@ function CoursesCategory({openModal, action, route ,navigation }) {
                             >
                                 <Card.Title 
                                     title={item.course?.title.toUpperCase()}
-                                    style={{backgroundColor: "#0080ff", borderTopLeftRadius: 10, borderTopRightRadius: 10}}
+                                    style={{backgroundColor: Config.primaryColor, borderTopLeftRadius: 10, borderTopRightRadius: 10}}
                                     titleStyle={{color: "white", fontWeight: "bold"}}                                 
                                     right={() => {
                                         return(
@@ -130,7 +214,7 @@ function CoursesCategory({openModal, action, route ,navigation }) {
                                         )
                                     }}
                                 />
-                                <Card.Cover source={{ uri: 'http://192.168.1.2:4000//coursesImages/' + item.course?.mainImage }} />
+                                <Card.Cover source={{ uri: Config.urlBackEnd + '//coursesImages/' + item.course?.mainImage }} />
                                 <Text style={styles.descripCardText}>Horas {item.course?.hours}h - {item.course?.category}</Text>    
                                 <Text style={styles.contentDescrip}>{item.course?.description.slice(0, 250)+"..."}</Text>
                                 <Text style={styles.descripCard}>Por: {item.userInfo?.name}</Text>                                
@@ -179,17 +263,17 @@ const styles = StyleSheet.create({
     card: {
         // margin: 20,
         borderBottomRightRadius: 70,     
-        borderBottomColor: "#0080ff",
+        borderBottomColor: Config.primaryColor,
         borderBottomWidth: 1,
         borderRightWidth: 1,
-        borderRightColor: "#0080ff",   
+        borderRightColor: Config.primaryColor,   
         borderRadius: 10                                 
     },
     priceText:{
         fontSize: 25,
         fontWeight: "bold",
         // marginRight: 10,
-        color: "#0080ff",
+        color: Config.primaryColor,
         backgroundColor: "white",
         padding: 5,
         width: 70,
@@ -198,7 +282,7 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: 20
     },
     subtitleCard: {
-        color: "#0080ff",
+        color: Config.primaryColor,
     },
     serachBox: {
         margin: 10,       
@@ -212,11 +296,11 @@ const styles = StyleSheet.create({
     descripCard: {
         padding: 10,        
         fontSize: 12,
-        color: "#0080ff",
+        color: Config.primaryColor,
         fontWeight: "normal",
         letterSpacing: 0.4   
     },containerCard : {
-        backgroundColor: "#0080ff",
+        backgroundColor: Config.primaryColor,
         margin: 10,
         borderRadius: 5,
         borderBottomRightRadius: 5,        
