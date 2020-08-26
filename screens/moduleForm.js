@@ -25,13 +25,14 @@ export default function ModuleForm({route, navigation}){
     const [form, setForm] = useState({
         title: "Modulo",
         content: "",
-        typeVideo: "url",   
+        typeVideo: "upload",   
         urlvideo: "",
         video: null,
         info: [{uri: "first", file: ""}],
         documents: [],
         contadorImage: 0,
-        contadorFiles: 0
+        contadorFiles: 0,
+        editVideo: false,
     });
 
     const [editForm, setEditForm] = useState({
@@ -44,20 +45,36 @@ export default function ModuleForm({route, navigation}){
         documentsEdit: false,
     });
 
+    const [imageAddFnc, setImageAddFnc] = useState([]);
+
+    const [imageDeleteFnc, setImageDeleteFnc] = useState([]);
+
+    const [documentAddFnc, setDocumentAddFnc] = useState([]);
+
+    const [documentDeleteFnc, setDocumentDeleteFnc] = useState([]);
+
     const [course_id, setCourse_id] = useState(null)
 
     const [loading, setLoading] = useState(false)
 
     const [edit, setEdit] = useState(false)
 
-    const { fetchCourseData } =  route.params;
+    const [moduleId, setModuleId] = useState("")
+
+    const [error, setError] = useState({
+        errorStatus: false,
+        errorMessage: ""
+    })
+
+    const { fetchCourseData } =  route.params;    
 
     useEffect(() => {
         const { coursesId } =  route.params;
         console.log(route.params)
         if (route.params.moduleId) {
-            setEdit(true)
-            fetchModuleInfo(route.params.moduleId)
+            setEdit(true);
+            fetchModuleInfo(route.params.moduleId);
+            setModuleId(route.params.moduleId);
         }
         setCourse_id(coursesId)
     }, [])
@@ -70,6 +87,9 @@ export default function ModuleForm({route, navigation}){
         .post( Config.urlBackEnd + '/getSingleModule', dataSend)
         .then(res => {
             if (res.data.response) {
+
+                console.log("video", res.data)
+
                 let arrayImage = form.info;
                 let imageContador = 0
                 let arrayFile = [];
@@ -78,7 +98,7 @@ export default function ModuleForm({route, navigation}){
                 res.data.data.attachmentModule.forEach(element => {
                     if (element.type_of_Attachment == "image") {
                         // arrayImage = [...form.info, {uri: element.attachment, file:""}]
-                        arrayImage.push({uri: Config.urlBackEnd + "//moduleImages/" + element.attachment, file:""})
+                        arrayImage.push({uri: Config.urlBackEnd + "//moduleImages/" + element.attachment, edit: true, id: element._id})
                         imageContador = imageContador + 1
                     }else if(element.type_of_Attachment == "file"){
                         // setForm({
@@ -87,18 +107,14 @@ export default function ModuleForm({route, navigation}){
                         //     contadorFiles: form.contadorFiles + 1
                         // })
                         // arrayFile = [...arrayFile,  {name: element.nameOfFile, uri: element.attachment}]
-                        arrayFile.push({name: element.nameOfFile, uri: element.attachment}  )
+                        arrayFile.push({name: element.nameOfFile, uri: element.attachment, edit: true, id: element._id}  )
                         contadorFile = contadorFile + 1
                     }else{
                         
                     }
                 });
-
-                if (res.data.data.module.type_of_video_source == "upload") {
-                    arriveVideo = Config.urlBackEnd + "//moduleVideos/"+ res.data.data.module.attachmentVideo
-                }else{
-                    arriveVideo = res.data.data.module.attachmentVideo
-                }
+                
+                arriveVideo = Config.urlBackEnd + "//moduleVideos/"+ res.data.data.module.attachmentVideo                
 
                 setForm({
                     ...form,
@@ -115,50 +131,7 @@ export default function ModuleForm({route, navigation}){
             }
         })
     }
-
-    const handleCheckUrl  = () => {
-        if (form.typeVideo == "url") {
-            setForm({
-                ...form,
-                typeVideo: "upload"
-            })
-        }else{
-            setForm({
-                ...form,
-                typeVideo: "url"
-            })
-        }
-
-        if (edit) {
-            setEditForm({
-                ...editForm,
-                typeVideoEdit: true
-            })
-        }
-    } 
     
-    const handleCheckUpload  = () => {
-        if (form.typeVideo == "upload") {
-            setForm({
-                ...form,
-                typeVideo: "url"
-            })
-        }else{
-            setForm({
-                ...form,
-                typeVideo: "upload"
-            })
-        }
-
-        
-        if (edit) {
-            setEditForm({
-                ...editForm,
-                typeVideoEdit: true
-            })
-        }
-    } 
-
     const pickVideo = async () => {
         try {
           let result = await ImagePicker.launchImageLibraryAsync({
@@ -168,15 +141,15 @@ export default function ModuleForm({route, navigation}){
             quality: 1,
           });
           if (!result.cancelled) {            
-             setForm({...form, video: result.uri})        
+             setForm({...form, video: result.uri, editVideo: true})        
           }
 
-          if (edit) {
-            setEditForm({
-                ...editForm,
-                videoEdit: true
-            })
-        }
+        // if (edit) {
+        //     setEditForm({
+        //         ...editForm,
+        //         videoEdit: true
+        //     })
+        // }
 
         } catch (E) {
           console.log(E);
@@ -184,17 +157,55 @@ export default function ModuleForm({route, navigation}){
     };
 
     const pickDocument = async () => {
-        let result = await DocumentPicker.getDocumentAsync({});
-        setForm({
-            ...form,
-            contadorFiles: form.contadorFiles + 1,
-            documents: [...form.documents, {name: result.name, uri: result.uri}]
-        })
+
+        let arrayDocument = documentAddFnc;
+        let result = await DocumentPicker.getDocumentAsync({});        
+
+        if (!(result.type == "cancel")) {
+            
+            if (edit) {
+                const addDocument = async () => {
+                    const dataSend = new FormData();
+                    let typeFile = result.uri.substring(result.uri.lastIndexOf(".") + 1);
+                    dataSend.append('type_of_Attachment', 'file');                    
+                    dataSend.append('moduleId', moduleId);                                 
+                    dataSend.append(`fileUnique`, {
+                        uri: result.uri,
+                        name: `${result.name}.${typeFile}`,
+                        type: `file/${typeFile}`
+                    })
+
+                    await axios
+                    .post( Config.urlBackEnd + "/addAttachmentsModule", dataSend)
+                    .then(res => {
+                        if (res.data.response) {
+                            console.log("Se ha añadido un documento")
+                        } else {
+                            console.log(res.data.message);
+                        }
+                    })
+
+                }
+
+                arrayDocument.push({addDocumentFunction: addDocument});
+
+                setDocumentAddFnc(arrayDocument);
+            }
+
+            setForm({
+                ...form,
+                contadorFiles: form.contadorFiles + 1,
+                documents: [...form.documents, {name: result.name, uri: result.uri, edit: false}]
+            })
+        }
         // alert(result.name);
         // console.log(result);
 	}
 
     const addImage = async () => {
+
+        let arrayImage = imageAddFnc;
+
         try {
             let result = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -203,10 +214,40 @@ export default function ModuleForm({route, navigation}){
                 quality: 1,
             });
             if (!result.cancelled) {
+
+                if (edit) {
+                    const addImageEdit = async () => {
+                        const dataSend = new FormData();
+                        let typeFile = result.uri.substring(result.uri.lastIndexOf(".") + 1);
+                        dataSend.append('type_of_Attachment', 'image');    
+                        dataSend.append("moduleId", moduleId);                        
+                        dataSend.append(`imageUnique`, {
+                            uri: result.uri,
+                            name: `photo.${typeFile}`,
+                            type: `image/${typeFile}`
+                        })
+
+                        await axios
+                        .post(Config.urlBackEnd + '/addAttachmentsModule', dataSend)
+                        .then(res => {
+                            if (res.data.response) {
+                                console.log("se ha podido agregar la imagen")
+                            }else{
+                                console.log(res.data.message);
+                            }
+                        })
+                    }
+
+                    arrayImage.push({addImageFunction: addImageEdit})
+
+                    setImageAddFnc(arrayImage);
+
+                }
+
                 setForm({
                     ...form,
                     contadorImage: form.contadorImage + 1,
-                    info: [...form.info, {uri: result.uri, file:""}]
+                    info: [...form.info, {uri: result.uri, edit: false}]
                 })
             }
         
@@ -218,7 +259,30 @@ export default function ModuleForm({route, navigation}){
 
     const eliminate = (index) => {
         const array = form.info
-        array.splice(index, 1)
+        const itemEliminate = array.splice(index, 1)
+        var arrayFnc = imageDeleteFnc;
+
+        if (itemEliminate[0].edit) {            
+            const eliminateImage = async (attachmentId) => {
+                const dataSend = new FormData();
+                dataSend.append('attachment_Id', attachmentId);
+
+                await axios
+                .post( Config.urlBackEnd + '/eliminateAttachmentsModule', dataSend)
+                .then(res => {
+                    if(res.data.response){
+                        console.log("Se ha eliminado");
+                    }else{
+                        console.log(res.data.message);
+                    }
+                })
+            }
+
+            arrayFnc.push({id: itemEliminate[0].id ,functionEliminate: eliminateImage})                                    
+        }
+
+        setImageDeleteFnc(arrayFnc);
+
         setForm({
             ...form,
             info: array,
@@ -250,8 +314,32 @@ export default function ModuleForm({route, navigation}){
     }
 
     const eliminateFile = (index) => {
-        const array = form.documents
-        array.splice(index, 1)
+        const array = form.documents;
+        const itemEliminate = array.splice(index, 1);
+        var arrayFnc = documentDeleteFnc;
+
+        if (itemEliminate[0].edit) {            
+            const eliminateFile = async (attachmentId) => {
+                const dataSend = new FormData();
+                dataSend.append('attachment_Id', attachmentId);
+
+                await axios
+                .post( Config.urlBackEnd + '/eliminateAttachmentsModule', dataSend)
+                .then(res => {
+                    if(res.data.response){
+                        console.log("Se ha eliminado");
+                    }else{
+                        console.log(res.data.message);
+                    }
+                })
+            }
+
+            arrayFnc.push({id: itemEliminate[0].id ,functionEliminate: eliminateFile})
+      
+        }
+        
+        setDocumentDeleteFnc(arrayFnc);
+
         setForm({
             ...form,
             documents: array,
@@ -259,15 +347,133 @@ export default function ModuleForm({route, navigation}){
         })        
     }
 
+    const createModule = () => {
+        const isValidate = validation();
+
+        if (isValidate) {
+            handleSubmit()
+        }
+    }
+
+    const editModule = () => {
+        const isValidate = validation();
+
+        if (isValidate) {
+            handleEdit();
+        }
+    }
+
+    const validation = () => {
+        const {title, content , video } = form;
+
+        if (title == "") {
+
+            setError({
+                errorStatus: true,
+                errorMessage: "Por favor coloque un titulo"
+            })
+            return false
+
+        } else {
+            setError({
+                errorStatus: false,
+                errorMessage: ""
+            })
+        }
+
+        if (content == "") {
+            
+            setError({
+                errorStatus: true,
+                errorMessage: "Por favor no deje el contenido en blanco"
+            })
+            return false 
+
+        } else {
+            setError({
+                errorStatus: false,
+                errorMessage: ""
+            })
+        }
+        
+        if (video == null) {
+            setError({
+                errorStatus: true,
+                errorMessage: "Por favor coloque un video para el modulo"
+            })
+            return false
+        }else{
+            setError({
+                errorStatus: false,
+                errorMessage: ""
+            })
+        }
+
+        return true;
+
+    }
+
+    const handleEdit = async () => {
+        const dataSend = new FormData();
+
+        dataSend.append('moduleId', moduleId);
+        dataSend.append('title', form.title)
+        dataSend.append('contentText', form.content)
+
+        if (form.editVideo) {
+            let fileType = fileType = form.video.substring(form.video.lastIndexOf(".") + 1);    
+            dataSend.append('attachmentVideo', {
+                uri: form.video,
+                name: `videoModule.${fileType}`,
+                type: `video/${fileType}`
+            })
+        }
+
+        if (imageAddFnc) {
+            imageAddFnc.forEach(element => {
+                element.addImageFunction()
+            })
+        }
+
+        if (imageDeleteFnc) {
+            imageDeleteFnc.forEach(element => {
+                element.functionEliminate(element.id);
+            })
+        }
+
+        if(documentAddFnc){
+            documentAddFnc.forEach(element => {
+                element.addDocumentFunction();
+            })
+        }
+
+        if (documentDeleteFnc) {
+            documentDeleteFnc.forEach(element => {
+                element.functionEliminate(element.id);
+            })
+        }
+
+        setLoading(true)
+
+        await axios
+        .post( Config.urlBackEnd + "/updateModule" , dataSend)
+        .then(res => {
+            if (res.data.response) {
+                setLoading(false)
+                console.log("Logrado")
+                navigation.goBack();
+            }else{
+                console.log(res.data.message)
+            }
+        })
+
+    }
+
     const handleSubmit = async () => {
 
-        let fileType = null;
+        let fileType = fileType = form.video.substring(form.video.lastIndexOf(".") + 1);
         let contImage = 0
         let contFiles = 0
-
-        if (form.typeVideo == "upload") {
-            fileType = form.video.substring(form.video.lastIndexOf(".") + 1);    
-        }
 
         const data = new FormData();
         //colocar aqui el id del usuario
@@ -553,16 +759,23 @@ export default function ModuleForm({route, navigation}){
                         </View>
                     </View>
 
+                    {error 
+                    ?
+                    <Text>{error.errorMessage}</Text>
+                    :
+                    null
+                    }
+
                     <View style={[styles.formGroup, styles.btnVideo]}> 
                         {edit 
                         ?
-                        <TouchableOpacity onPress={() => handleChangeEdit()} >
+                        <TouchableOpacity onPress={() => editModule()} >
                         <View style={[styles.cajaSave, styles.shadow]}>
                             <Text style={styles.textSave}>Actualizar Modulos</Text>                 
                         </View>       
                         </TouchableOpacity>  
                         :
-                        <TouchableOpacity onPress={() => handleSubmit()} >
+                        <TouchableOpacity onPress={() => createModule()} >
                         <View style={[styles.cajaSave, styles.shadow]}>
                             <Text style={styles.textSave}>Añadir Modulo</Text>                 
                         </View>       

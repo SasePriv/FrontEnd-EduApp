@@ -23,7 +23,7 @@ const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.7);
 
 let selected = ""
 
-function AddCourses({navigation, openModal}) {
+function AddCourses({route,navigation,openModal}) {
     const [formData, setForm] = useState({
         title: "",
         description: "",
@@ -33,8 +33,10 @@ function AddCourses({navigation, openModal}) {
         contador: 0,
         typeService: "free",
         hours: "",
-        price: "",
-        imageUnique: null,        
+        price: 10,
+        imageUnique: null,      
+        edit: false,
+        editSecond: false  
     });
     const [status, setStatus] = useState({
         dropDown: 0
@@ -52,19 +54,35 @@ function AddCourses({navigation, openModal}) {
         errorStatus: false
     })
 
-    const [loading, setLoading] = useState(false)
+    const [imageFnc, setImageFnc] = useState([]);
 
-    const [userId, setUserId] = useState(null)
+    const [infoImage, setInfoImage] = useState([])
 
-    const [items, setItems] = useState(null)
+    const [loading, setLoading] = useState(false);
+
+    const [userId, setUserId] = useState(null);
+
+    const [items, setItems] = useState(null);
+
+    const [edit, setEdit] = useState(false);
+
+    const [courseId, setCourseId] = useState("");
 
     useEffect(() => {
         // getPermissionAsync();
     })
 
-    useEffect(() =>{ 
+    useEffect(() =>{         
         handleAsync()
         fetchCategory()
+        if (route.params) {
+            if(route.params.coursesId){
+                setEdit(true);
+                console.log("courseId", route.params.coursesId)
+                setCourseId(route.params.coursesId);
+                fetchCourseDataEdit(route.params.coursesId)
+            }
+        }
       },[])
     
     const handleAsync  = async() => {
@@ -87,16 +105,56 @@ function AddCourses({navigation, openModal}) {
         .get( Config.urlBackEnd + '/getAllCategory')
         .then(res => {
             if (res.data.response) {
-                console.log(res.data.data)
+                console.log("catefory", res.data.data)
                 res.data.data.forEach(element => {
                     resultArray.push({label: element.title, value: element.title})
                 })
+                console.log("Terminado", resultArray);
                 setItems(resultArray)
             } else {
                 setItems([{
                     label: "No hay categorias disponible",
                     value: 0
                 }])
+            }
+        })
+    }
+
+    const fetchCourseDataEdit = async (course_Id) => {
+        const dataSend = new FormData();
+        dataSend.append('courseId', course_Id);
+
+        await axios
+        .post( Config.urlBackEnd + "/getCourseForEdit", dataSend)
+        .then(res => {
+
+            console.log("data", res.data.data)
+
+            if (res.data.response) {
+                let arrayImage = formData.info;
+                let imageContador = 0                                                
+                res.data.data.attachmentCourse.forEach(element => {
+                    if (element.type_of_Attachment == "image") {
+                        // arrayImage = [...form.info, {uri: element.attachment, file:""}]
+                        arrayImage.push({uri: Config.urlBackEnd + "//coursesImages/" + element.attachment, edit: true, id: element._id})
+                        imageContador = imageContador + 1
+                    }                    
+                });
+                
+                setForm({
+                    ...formData,
+                    imageUnique: Config.urlBackEnd + "/coursesImages/" + res.data.data.course.mainImage,
+                    title: res.data.data.course.title,
+                    description: res.data.data.course.description,
+                    category: res.data.data.course.category,  
+                    typeService: res.data.data.course.typeService,
+                    hours: res.data.data.course.hours,
+                    price: res.data.data.course.price / Config.multiMonedas,
+                    info: arrayImage,                    
+                    contador: imageContador,                    
+                })
+            }else{
+
             }
         })
     }
@@ -118,28 +176,6 @@ function AddCourses({navigation, openModal}) {
         }
     };
 
-    // const _pickImage = async () => {
-    //     try {
-    //       let result = await ImagePicker.launchImageLibraryAsync({
-    //         mediaTypes: ImagePicker.MediaTypeOptions.All,
-    //         allowsEditing: true,
-    //         aspect: [4, 3],
-    //         quality: 1,
-    //       });
-    //       if (!result.cancelled) {
-    //         setImage(result.uri);
-    //         setForm({
-    //             ...formData,
-    //             info: [...formData.info, {uri: result.uri, file:""}]
-    //         })
-    //       }
-    
-    //       console.log(result);
-    //     } catch (E) {
-    //       console.log(E);
-    //     }
-    // };
-
     const _pickFirstImage = async () => {
         try {
           let result = await ImagePicker.launchImageLibraryAsync({
@@ -151,19 +187,20 @@ function AddCourses({navigation, openModal}) {
           if (!result.cancelled) {            
             setForm({
                 ...formData,
-                imageUnique: result.uri,                                          
+                imageUnique: result.uri, 
+                edit: true                                         
             })
-
-            console.log(result)
           }
-    
-          console.log(result);
+
         } catch (E) {
           console.log(E);
         }
     };
 
     const addImage = async () => {
+
+        let arrayImage = infoImage;
+
         try {
             let result = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -173,12 +210,41 @@ function AddCourses({navigation, openModal}) {
             });
             if (!result.cancelled) {
 
+                if (edit) {
+                    const addImageEdit = async () => {
+                        const dataSend = new FormData();
+                        let typeFile = result.uri.substring(result.uri.lastIndexOf(".") + 1);
+                        dataSend.append("coursesId", courseId);                        
+                        dataSend.append(`imageUnique`, {
+                            uri: result.uri,
+                            name: `photo.${typeFile}`,
+                            type: `image/${typeFile}`
+                        })
+
+                        await axios
+                        .post(Config.urlBackEnd +  '/addAttachmentCourse', dataSend)
+                        .then(res => {
+                            if (res.data.response) {
+                                console.log("se ha podido agregar la imagen")
+                            }else{
+                                console.log(res.data.message);
+                            }
+                        })
+                    }
+
+                    arrayImage.push({addImageFnc: addImageEdit})
+
+                    setInfoImage(arrayImage);
+
+                }
+
                 let fileType =  result.uri.substring(result.uri.lastIndexOf(".") + 1);
         
                 setForm({
                     ...formData,
                     contador: formData.contador + 1,
-                    info: [...formData.info, {uri: result.uri, name: `photo.${fileType}`,type: `image/${fileType}`}]
+                    info: [...formData.info, {uri: result.uri, name: `photo.${fileType}`,type: `image/${fileType}`, edit: false}],
+                    editSecond: true
                 })
             }
         
@@ -190,12 +256,37 @@ function AddCourses({navigation, openModal}) {
 
     const eliminate = (index) => {
         const array = formData.info
-        array.splice(index, 1)
+        const itemEliminate = array.splice(index, 1)
+        var arrayFnc = imageFnc;
+
+        // console.log("Nombre",itemEliminate)
+
+        if (itemEliminate[0].edit) {            
+            const eliminateImage = async (attachmentId) => {
+                const dataSend = new FormData();
+                dataSend.append('attachment_Id', attachmentId);
+
+                await axios
+                .post( Config.urlBackEnd + '/eliminateAttachmentCourse', dataSend)
+                .then(res => {
+                    if(res.data.response){
+                        console.log("Se ha eliminado");
+                    }else{
+                        console.log(res.data.message);
+                    }
+                })
+            }
+
+            arrayFnc.push({id: itemEliminate[0].id ,functionEliminate: eliminateImage})
+      
+        }
+        
+        setImageFnc(arrayFnc);
         setForm({
             ...formData,
             info: array,
             contador: formData.contador - 1
-        })        
+        })
     }
 
     const renderItem = ({item, index}) =>{
@@ -391,7 +482,7 @@ function AddCourses({navigation, openModal}) {
         data.append('typeService', formData.typeService)
         data.append('hours', formData.hours)
 
-        const precioCoin = formData.price * 100
+        const precioCoin = formData.price * Config.multiMonedas
 
         data.append('price', precioCoin)
         data.append('contador', formData.contador)
@@ -439,6 +530,66 @@ function AddCourses({navigation, openModal}) {
 
     }
 
+    const editCourse = () => {
+        const isValidate = validate();
+
+        if(isValidate){
+            setLoading(true)
+            handleEdit()
+        }
+    }
+
+    const handleEdit = async () => {
+        const dataSend = new FormData();
+
+        dataSend.append('courseId', courseId);        
+        dataSend.append("title", formData.title);
+        dataSend.append('description', formData.description);
+        dataSend.append('category', formData.category);
+        dataSend.append('typeService', formData.typeService);
+        dataSend.append('hours', formData.hours);
+        const precioCoin = 0;
+        if (formData.typeService == "pay") {
+            precioCoin = formData.price * Config.multiMonedas;
+        }
+        dataSend.append('price', precioCoin);
+        
+        if(formData.edit){
+            let fileType = formData.imageUnique.substring(formData.imageUnique.lastIndexOf(".") + 1);
+            dataSend.append('imageUnique', {
+                uri: formData.imageUnique,
+                name: `photo.${fileType}`,
+                type: `image/${fileType}`
+            })
+        }
+            
+        if (imageFnc) {
+            imageFnc.forEach(element => {                   
+                element.functionEliminate(element.id);
+            })
+        }
+
+        if(formData.editSecond){
+            infoImage.forEach(element => {
+                element.addImageFnc();
+            })
+        }
+
+        await axios
+        .post( Config.urlBackEnd + "/updateCourse", dataSend)
+        .then(res => {
+            console.log(res)
+            if (res.data.response) {
+                console.log("Logrado")
+                navigation.goBack();
+            } else {
+                console.log(res.data.message)
+            }
+        })
+        
+    }
+
+
     if(loading){
         return(
             <View style={styles.loading}>
@@ -450,7 +601,6 @@ function AddCourses({navigation, openModal}) {
             </View>
         )
     }
-
 
     return(
         <View keyboardShouldPersistTaps="handled" >
@@ -554,7 +704,7 @@ function AddCourses({navigation, openModal}) {
                             <FontAwesome5 name="money-bill-wave" style={styles.icon} size={24} color={Config.primaryColor} />
                             <TextInput
                                 onChangeText={text => setForm({...formData,price: text})}
-                                value={formData.price}
+                                value={formData.price.toString()}
                                 style={[styles.input]}                
                                 selectionColor={Config.primaryColor}
                                 placeholder="Precio"  
@@ -585,9 +735,16 @@ function AddCourses({navigation, openModal}) {
                     <Text style={styles.error}>{error.errorMessage}</Text>
                     }            
                     
+                    {edit 
+                    ? 
+                    <View style={styles.formGroup}>
+                        <Button title="Editar Curso" onPress={editCourse} />
+                    </View>
+                    : 
                     <View style={styles.formGroup}>
                         <Button title="Crear Curso" onPress={createCourse} />
-                    </View>                    
+                    </View>
+                    }                                        
                     {/* <View style={styles.formGroup}>  
                         <Text style={styles.labelText}>Modulos</Text>
                         <TouchableOpacity onPress={() => openModal()}>

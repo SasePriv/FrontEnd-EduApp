@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext} from 'react'
-import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, Platform,Alert  } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Image, TouchableOpacity, Platform, Alert  } from 'react-native'
 import { AntDesign } from '@expo/vector-icons'; 
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import { FontAwesome5 } from '@expo/vector-icons'; 
@@ -18,14 +18,14 @@ const itemSkus = Platform.select({
     android: [
         '1000_monedas',
         '2000_monedas',
-        '3000_monedas'        
+        '3000_monedas'  
     ]
   });
 
 // initializeInAppPurchase();
 
 
-export default function MyProfile() {
+export default function MyProfile({navigation}) {
 
     const [userInfo, setUserInfo] = useState(null);
     const [userWallet, setUserWallet] = useState(null);
@@ -39,8 +39,14 @@ export default function MyProfile() {
 
     useEffect(() => {
         // initializeInAppPurchase()
-        // fetchProductsData()        
+        fetchProductsData()        
     },[])
+
+    useEffect(() => {
+        const refreshUserData = navigation.addListener('focus', () => {
+            fetchUserData();
+          });
+    }, [navigation])
 
     const fetchUserData = async() => {
         try {
@@ -117,8 +123,19 @@ export default function MyProfile() {
                 }
             })
     }
-    var example = "android.test.purchased"
-    
+
+    const handleEditProfile = () => {
+        navigation.navigate('EditProfile', {userInfo})
+    }
+
+    const handleChangePassword = () => {
+        navigation.navigate('ChangePassword', {userInfo})
+    }
+
+    const handleEliminateUser = () => {
+        navigation.navigate('EliminateUser', {userInfo})
+    }
+
     return(
         <ScrollView>
             <View style={[styles.containerUser]}>
@@ -173,10 +190,8 @@ export default function MyProfile() {
 
                     }
 
-                    var example = "android.test.purchased"
-
                     return(
-                        <TouchableOpacity key={index} onPress={() => requestPurchase_Addcoin(example)} style={{width: "33.5%"}}>
+                        <TouchableOpacity key={index} onPress={() => requestPurchase_Addcoin(product.productId)} style={{width: "33.5%"}}>
                             <View style={styles.btnAddCoins}>
                                 <Text style={styles.textAddCoin}>Añadir</Text>
                                 <View style={styles.numberCoin}>
@@ -190,38 +205,25 @@ export default function MyProfile() {
                     )
                 })
                 :
-                <TouchableOpacity key={index} onPress={() => requestPurchase_Addcoin(example)} style={{width: "33.5%"}}>
-                    <View style={styles.btnAddCoins}>
-                        <Text style={styles.textAddCoin}>Añadir</Text>
-                        <View style={styles.numberCoin}>
-                            <Text style={[styles.textAddCoin, styles.textCoinCenter]}>{monedas}</Text>
-                            <FontAwesome5 style={styles.iconCoinBoc} name="coins" size={20} color="#efb810" />
-                        </View>
-                        <Text style={styles.textAddCoin}>Monedas</Text>
-                        <Text style={styles.textAddCoin}>{product.price}$</Text>
-                    </View>
-                </TouchableOpacity>
+                null
                 }
 
             </View>
 
             <View style={styles.containerOptions}>
-                <View style={styles.eachOption}>
-                    <AntDesign style={styles.icon} name="edit" size={25} color="#526065" />
-                    <Text style={styles.textEach}>Editar mi Perfil</Text>
-                </View>
-                <View style={styles.eachOption}>
-                    <MaterialCommunityIcons name="textbox-password" style={styles.icon} size={25} color="#526065" />
-                    <Text style={styles.textEach}>Cambiar la Contraseña</Text>
-                </View>
-                {/* <TouchableOpacity onPress={() => requestPurchase(itemSkus)}>
+                <TouchableOpacity onPress={handleEditProfile}>
+                    <View style={styles.eachOption}>
+                        <AntDesign style={styles.icon} name="edit" size={25} color="#526065" />
+                        <Text style={styles.textEach}>Editar mi Perfil</Text>
+                    </View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={handleChangePassword}>
                     <View style={styles.eachOption}>
                         <MaterialCommunityIcons name="textbox-password" style={styles.icon} size={25} color="#526065" />
-                        <Text style={styles.textEach}>Añadir Monedas</Text>
+                        <Text style={styles.textEach}>Cambiar la Contraseña</Text>
                     </View>
-                </TouchableOpacity> */}
-                
-                <TouchableOpacity onPress={() => requestPurchase_Addcoin("android.test.purchased")}>
+                </TouchableOpacity>         
+                <TouchableOpacity onPress={handleEliminateUser}>
                 <View style={styles.eachOption}>
                     <AntDesign name="delete" style={styles.icon} size={25} color="#526065" />
                     <Text style={styles.textEach}>Eliminar Cuenta</Text>

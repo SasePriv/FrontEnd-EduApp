@@ -2,6 +2,9 @@ import React from 'react';
 import { createStackNavigator, TransitionPresets, CardStyleInterpolators } from '@react-navigation/stack';
 import { StyleSheet } from 'react-native'
 import MyProfile from '../screens/myProfile'
+import EditProfile from '../screens/editProfile'
+import ChangePassword from '../screens/changePassword'
+import EliminateUser from '../screens/eliminateUser'
 
 const Stack = createStackNavigator();
 
@@ -22,7 +25,10 @@ export default function ProfileStack() {
                         headerTitleStyle: styles.headerTitle
                     }}
                 />
-                {/* <Stack.Screen name="Category" component={CoursesCategory}/> */}
+                <Stack.Screen name="EditProfile" component={EditProfile}/>
+                <Stack.Screen name="ChangePassword" component={ChangePassword}/>
+                <Stack.Screen name="EliminateUser" component={EliminateUser}/>
+
             </Stack.Navigator>
         )
 }

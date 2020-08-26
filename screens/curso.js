@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     },
     hoverBack: {
         position: "absolute",
-        backgroundColor: "rgba(0, 128, 255, 0.5)",
+        backgroundColor: "rgba(229, 90, 91, 0.5)",
         width: 150,
         height: 220,
         justifyContent: "center",        
