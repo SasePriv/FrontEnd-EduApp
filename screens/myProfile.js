@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import Config from '../config'
 import axios from 'axios'
 import * as RNIap from "react-native-iap"
-
+import LinearGradient from 'react-native-linear-gradient';
 import { AuthContext } from '../components/context'
 
 const itemSkus = Platform.select({
@@ -182,17 +182,17 @@ export default function MyProfile({navigation}) {
                     let monedas = 0;
 
                     if (product.price == 10) {
-                        monedas = 1000;
+                        monedas = 1750;
                     }else if(product.price == 20){
-                        monedas = 2000;
+                        monedas = 3500;
                     }else if(product.price == 30){
-                        monedas = 3000
+                        monedas = 5250;
 
                     }
 
                     return(
                         <TouchableOpacity key={index} onPress={() => requestPurchase_Addcoin(product.productId)} style={{width: "33.5%"}}>
-                            <View style={styles.btnAddCoins}>
+                            <LinearGradient start={{x: 0, y: 0}} end={{x: 2.0, y: 0}} colors={['#e55a5b', '#fedf67']} style={styles.btnAddCoins}>
                                 <Text style={styles.textAddCoin}>Añadir</Text>
                                 <View style={styles.numberCoin}>
                                     <Text style={[styles.textAddCoin, styles.textCoinCenter]}>{monedas}</Text>
@@ -200,7 +200,7 @@ export default function MyProfile({navigation}) {
                                 </View>
                                 <Text style={styles.textAddCoin}>Monedas</Text>
                                 <Text style={styles.textAddCoin}>{product.price}$</Text>
-                            </View>
+                            </LinearGradient>
                         </TouchableOpacity>
                     )
                 })
@@ -352,12 +352,12 @@ const styles = StyleSheet.create({
     //   margin: 5,
     padding: 10,
     // height: 100,    
-    backgroundColor: "#ddd",
+    // backgroundColor: "#ddd",
     justifyContent: "center",      
-    borderRightWidth: 2,
+    borderRightWidth: 0.5,
     // borderWidth: 5,
-    borderColor: Config.secondaryColor,
-    backgroundColor: Config.primaryColor
+    // borderColor: Config.secondaryColor,
+    // backgroundColor: Config.primaryColor
   },
   coinBox:{
       flexDirection: "row",      

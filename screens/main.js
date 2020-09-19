@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons2 from 'react-native-vector-icons/MaterialIcons'
 import { MaterialIcons } from '@expo/vector-icons'; 
 import { Feather } from '@expo/vector-icons'; 
 import Login from '../components/login'
@@ -56,6 +57,8 @@ export default function MyTabs() {
         }}
       /> */}
       
+      {typeOfUser == "admin" ? null 
+      :
       <Tab.Screen
         name="Courses"
         component={CoursesStack}
@@ -67,7 +70,7 @@ export default function MyTabs() {
           ),
         }}
       />
-      
+      }      
       
       {typeOfUser == "teacher" 
       ? 
@@ -102,18 +105,36 @@ export default function MyTabs() {
       :
       null
       }
+
+      {typeOfUser == "admin" 
+      ?
+        <Tab.Screen
+          name="Info"
+          component={HomeStack}
+          options={{
+            tabBarLabel: 'Payment',
+            // tabBarColor: '#795548',
+            tabBarIcon: ({ color }) => (
+              <MaterialIcons2 name="payment" color={color} size={27} />
+            ),
+          }}
+        />
+        null
+      : 
+        <Tab.Screen
+          name="Home"
+          component={HomeStack}
+          options={{
+            tabBarLabel: 'Home',
+            // tabBarColor: '#795548',
+            tabBarIcon: ({ color }) => (
+              <MaterialCommunityIcons name="home" color={color} size={27} />
+            ),
+          }}
+        />
+      }
       
-      <Tab.Screen
-        name="Home"
-        component={HomeStack}
-        options={{
-          tabBarLabel: 'Home',
-          // tabBarColor: '#795548',
-          tabBarIcon: ({ color }) => (
-            <MaterialCommunityIcons name="home" color={color} size={27} />
-          ),
-        }}
-      />
+
       <Tab.Screen
         name="Profile"
         component={ProfileStack}

@@ -208,6 +208,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-linear-gradient')
     implementation project(':rn-fetch-blob')
     def billing_version = "3.0.0"
 

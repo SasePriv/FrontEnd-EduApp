@@ -5,7 +5,7 @@ import { AntDesign } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import Config from '../config'
-
+import LinearGradient from 'react-native-linear-gradient';
 
 export default function CategoryPanel() {
 
@@ -160,8 +160,9 @@ export default function CategoryPanel() {
 
     return(
         <ScrollView style={styles.container}>
-            <Text style={styles.subTitle}>Categorias Cursos</Text>
-
+            <LinearGradient start={{x: 0, y: 0}} end={{x: 1.1, y: 0}} colors={['#e55a5b', '#fedf67']} style={styles.linearGradient}>  
+                <Text style={styles.subTitle}>Categorias Cursos</Text>
+            </LinearGradient>   
             <View style={styles.addCategoryContainer}>
 
                 {imageNew 
@@ -282,16 +283,18 @@ const styles = StyleSheet.create({
         backgroundColor: "white"
     },
     subTitle: {
+        fontSize: 25,
+        color: "white",
+        fontWeight: "bold",
+
+    },
+    linearGradient:{
         padding: 20,
         paddingBottom: 0,
-        fontSize: 25,
         paddingTop: 5,
         paddingBottom: 5,
         marginTop: 10,
-        backgroundColor: Config.primaryColor,
         width: 270,
-        color: "white",
-        fontWeight: "bold",
         borderBottomRightRadius: 40,
         borderTopRightRadius: 5
     },

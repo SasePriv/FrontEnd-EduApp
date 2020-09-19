@@ -47,7 +47,10 @@ export default function HomeStack() {
                         }
                     }}
                 />
-                <Stack.Screen name="Category" component={CoursesCategory}/>
+                <Stack.Screen 
+                    name="Category" 
+                    component={CoursesCategory}                    
+                />
             </Stack.Navigator>
         )
 }

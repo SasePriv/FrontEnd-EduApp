@@ -5,7 +5,7 @@ import CustomModal from './customModal'
 import { Searchbar , Card} from 'react-native-paper';
 import axios from 'axios'
 import Config from '../config'
-
+import { handleChangeBar } from '../utils/searchFunction';
 // let selected = ""
 let status = false
 
@@ -16,6 +16,8 @@ function CoursesCategory({openModal, action, route ,navigation }) {
 
     const [info, setInfo] = useState(null);
 
+    const [originalInfo, setOriginalInfo] = useState(null);
+
     const [selected, setSelected] = useState(null)
 
     const [userId, setUserId] = useState(null)
@@ -23,9 +25,17 @@ function CoursesCategory({openModal, action, route ,navigation }) {
     useEffect(() => {
         const { category } = route.params;
         setCategoryTitle(category);
+        navigation.setOptions({ title: category })
         fetchCategoryData(category)
         handleAsync()
     },[])
+
+    useEffect(() => {
+        const { category } = route.params;
+        const refreshUserData = navigation.addListener('focus', () => {
+            fetchCategoryData(category)
+        });
+    }, [navigation])
 
     const handleAsync  = async() => {
         let dataAsync;
@@ -50,6 +60,7 @@ function CoursesCategory({openModal, action, route ,navigation }) {
         .then(res => {
             if (res.data.response) {
                 setInfo(res.data.data)
+                setOriginalInfo(res.data.data)
             } else {
                 setInfo(null)
             }
@@ -137,6 +148,7 @@ function CoursesCategory({openModal, action, route ,navigation }) {
         dataSend.append('coursesId', course._id);
         dataSend.append('typeService', course.typeService);
         dataSend.append('priceCoin', course.price);
+        dataSend.append('profesor_id', course.user_id);
 
         await axios
         .post( Config.urlBackEnd + '/acquireCourse', dataSend)
@@ -165,6 +177,17 @@ function CoursesCategory({openModal, action, route ,navigation }) {
 
     }
 
+    const handleSerachChange = (text) => {        
+        setTextSearch(text)
+        console.log(info)        
+        setInfo(handleChangeBar(info, originalInfo, text))
+    }
+
+    const handlebackspace= ({nativeEvent }) => {
+        if (nativeEvent.key === 'Backspace') {
+            setInfo(handleChangeBar(originalInfo, originalInfo, textSearch))
+        }
+    }
     return(
         <View style={styles.container}>
 
@@ -183,9 +206,10 @@ function CoursesCategory({openModal, action, route ,navigation }) {
                 
                 <Searchbar 
                     placeholder="Buscar"
-                    onChangeText={() => setTextSearch()}
+                    onChangeText={handleSerachChange}
                     value={textSearch}
-                    style={styles.serachBox}
+                    style={styles.serachBox}                    
+                    onKeyPress={handlebackspace}
                 />
                 }
 
@@ -196,7 +220,7 @@ function CoursesCategory({openModal, action, route ,navigation }) {
                 keyExtractor={item => item._id}
                 renderItem={ ({item}) => {
                     return(
-                    <TouchableOpacity onPress={() => onPressFunction(item)}>
+                    <TouchableOpacity onPress={() => onPressFunction(item)} key={item.course._id}>
                         <View style={styles.containerCard}>
                             <Card 
                                 elevation={7} 
@@ -209,7 +233,7 @@ function CoursesCategory({openModal, action, route ,navigation }) {
                                     right={() => {
                                         return(
                                             <Text style={styles.priceText}>
-                                                {item.course?.price ? item.course.price + "$" : "FREE"}
+                                                {item.course?.price ? item.course.price + "" : "FREE"}
                                             </Text>
                                         )
                                     }}
@@ -239,7 +263,8 @@ function CoursesCategory({openModal, action, route ,navigation }) {
             />
 
             :
-            <Text>asdas</Text>
+            // <Text>asdas</Text>
+            null
             }
         </View>
     )
@@ -273,10 +298,10 @@ const styles = StyleSheet.create({
         fontSize: 25,
         fontWeight: "bold",
         // marginRight: 10,
-        color: Config.primaryColor,
+        color: "#efb810",
         backgroundColor: "white",
         padding: 5,
-        width: 70,
+        width: 100,
         textAlign: "center",
         borderTopLeftRadius: 20,
         borderBottomLeftRadius: 20

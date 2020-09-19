@@ -69,12 +69,14 @@ export default function ModuleForm({route, navigation}){
     const { fetchCourseData } =  route.params;    
 
     useEffect(() => {
+        navigation.setOptions({ title: "Añadir Modulo" })
         const { coursesId } =  route.params;
         console.log(route.params)
         if (route.params.moduleId) {
             setEdit(true);
             fetchModuleInfo(route.params.moduleId);
             setModuleId(route.params.moduleId);
+            navigation.setOptions({ title: "Editar Modulo" })
         }
         setCourse_id(coursesId)
     }, [])
@@ -700,7 +702,7 @@ export default function ModuleForm({route, navigation}){
                     </View>
                     }
                     <View style={[styles.formGroup, styles.btnVideo]}>       
-                        <Button title="Subir video desde la galeria" onPress={pickVideo} />                        
+                        <Button title="Subir video desde la galeria" onPress={pickVideo} color={Config.primaryColor} />                        
                     </View>
                     </View>
                     {/* } */}
@@ -728,7 +730,7 @@ export default function ModuleForm({route, navigation}){
 
                             <View style={{alignItems:"center", margin: 10}}>
                                 <View style={{width: 100}}>
-                                    <Button title="Añadir" onPress={pickDocument}/>
+                                    <Button title="Añadir" onPress={pickDocument} color={Config.primaryColor}/>
                                 </View>
                             </View>
 
@@ -761,7 +763,7 @@ export default function ModuleForm({route, navigation}){
 
                     {error 
                     ?
-                    <Text>{error.errorMessage}</Text>
+                    <Text style={styles.error}>{error.errorMessage}</Text>
                     :
                     null
                     }
@@ -815,6 +817,12 @@ const styles = StyleSheet.create({
         paddingVertical: 0,
         paddingBottom: 0
     },
+    error: {
+        color: "red",
+        fontSize: 16,
+        textAlign: "center",
+        marginTop: 10
+    },
     containerInput:{
         flexDirection: "row",    
         paddingHorizontal: 10,
@@ -853,6 +861,12 @@ const styles = StyleSheet.create({
         // marginVertical: 10,
         padding: 5,
         width: "90%",
+    },
+    loading:{
+        position: "absolute",
+        right: 0,
+        left: 0,
+        top: "40%",
     },
     descriptionIcon:{
         marginTop: 41

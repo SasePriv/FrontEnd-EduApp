@@ -2,16 +2,17 @@ import React, { useState }  from 'react'
 import { StyleSheet, Text, View, ImageBackground, TouchableOpacity, ScrollView } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'; 
 import Config from '../config'
+import LinearGradient from 'react-native-linear-gradient';
 
 export default function CardCustom( {title, icon} ) {
 
     return(     
-            <View style={[styles.container, styles.shadow, styles.contianerOut]}>
+            <LinearGradient start={{x: 0, y: 0}} end={{x: 1.5, y: 0}} colors={['#e55a5b', '#fedf67']} style={[styles.container, styles.shadow, styles.contianerOut]}>
                 <View style={[styles.container, styles.shadow, styles.contianerInside]}>
                 <Text style={[styles.textCard]}>{title}</Text>
                 </View>            
                 <Ionicons style={styles.btnAdd} name={icon} size={65} color="white" />
-            </View>        
+            </LinearGradient>        
     )
 }
 
@@ -22,7 +23,7 @@ const styles = StyleSheet.create({
         // marginHorizontal: 20,
         borderColor: "#000",
         borderWidth: 0,
-        backgroundColor: Config.primaryColor,
+        // backgroundColor: Config.primaryColor,
         height: 250,
         display: "flex",
         borderRadius: 40,

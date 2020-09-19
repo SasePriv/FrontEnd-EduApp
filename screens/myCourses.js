@@ -4,6 +4,7 @@ import { Searchbar , Card, Title, Subheading } from 'react-native-paper';
 import axios from 'axios'
 import AsyncStorage from '@react-native-community/async-storage';
 import Config from '../config'
+import { handleChangeBar } from '../utils/searchFunction';
 
 const wait = (timeout) => {
     return new Promise(resolve => {
@@ -18,6 +19,7 @@ export default function MyCourses({navigation}) {
     const [refreshing, setRefreshing] = useState(false);
 
     const [info, setInfo] = useState(null)
+    const [originalInfo, setOriginalInfo] = useState(null);
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true);
@@ -65,16 +67,29 @@ export default function MyCourses({navigation}) {
         navigation.navigate('Curso', {dataCourse})
     }
 
+    const handleSerachChange = (text) => {        
+        setTextSearch(text)
+        console.log(info)        
+        setInfo(handleChangeBar(info, originalInfo, text))
+    }
+
+    const handlebackspace= ({nativeEvent }) => {
+        if (nativeEvent.key === 'Backspace') {
+            setInfo(handleChangeBar(originalInfo, originalInfo, textSearch))
+        }
+    }
+
     return(
         <View style={styles.container}>            
-            <Searchbar 
+            {/* <Searchbar 
                 placeholder="Buscar"
-                onChangeText={() => setTextSearch()}
+                onChangeText={handleSerachChange}
                 value={textSearch}
                 style={styles.serachBox}
-            />
+                onKeyPress={handlebackspace}
+            /> */}
 
-            {info 
+            {!info 
             ? 
             <FlatList
                 data={info}
@@ -108,7 +123,7 @@ export default function MyCourses({navigation}) {
                  }
             />
             :
-            <Text>No tienes ningun curso todavia</Text>
+            <Text style={{textAlign: "center", fontSize: 25, marginTop: 10}}>No tienes ningun curso todavia</Text>
             }
 
         </View>

@@ -5,6 +5,8 @@ import { AntDesign } from '@expo/vector-icons';
 import axios from 'axios'
 import Config from '../config'
 
+import LinearGradient from 'react-native-linear-gradient';
+
 import { AuthContext } from '../components/context'
 
 export default function RootScreen({navigation}) {
@@ -28,7 +30,22 @@ export default function RootScreen({navigation}) {
         .then(res => {
             console.log(res.data)
             if (res.data.response) {
-                signIn(res.data.data)
+                if(res.data.data.type_of_user == "user"){
+                    signIn(res.data.data)
+                }else if(res.data.data.type_of_user == "teacher"){
+                    if (res.data.data.status_teacher == "active") {
+                        signIn(res.data.data)
+                    }else{
+                        setForm({
+                            ...form,
+                            errorMessage: "El administrador tiene que activar su cuenta",
+                            errorStatus: true                 
+                        })
+                    }
+                }else{
+                    signIn(res.data.data)
+                }
+
             }else{
                 setForm({
                     ...form,
@@ -42,7 +59,7 @@ export default function RootScreen({navigation}) {
 
     return(
         <ScrollView style={{backgroundColor: "white"}}>
-        <View style={styles.container}>
+        <LinearGradient start={{x: 0, y: 0}} end={{x: 1.1, y: 0}} colors={['#e55a5b', '#fedf67']} style={styles.container}>
             <Image 
                 style={styles.logoLogin}
                 source={require('../assets/logo.png')}
@@ -82,14 +99,14 @@ export default function RootScreen({navigation}) {
                 </TouchableOpacity>
                 <View style={styles.botones}>
                     <View style={styles.btn}>
-                        <Button onPress={() => handleSubnmit(form.email, form.password)}  title="Iniciar Sesion"/>
+                        <Button onPress={() => handleSubnmit(form.email, form.password)}  title="Iniciar Sesion" color={Config.primaryColor}/>
                     </View>
                     <View style={styles.btn}>
-                        <Button onPress={() => navigation.navigate('register')} title="Registrarse"/>
+                        <Button onPress={() => navigation.navigate('register')} title="Registrarse" color={Config.primaryColor}/>
                     </View>
                 </View>
             </View>
-        </View>
+        </LinearGradient>
         </ScrollView>
     )
 }
@@ -107,7 +124,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: Config.primaryColor,
+        // backgroundColor: Config.primaryColor,
         alignItems: "center",        
     },
     logoLogin: {

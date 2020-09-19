@@ -4,7 +4,7 @@ import axios from 'axios'
 import Config from '../config'
 import { AuthContext } from '../components/context'
 
-export default function EliminateUser({route, userInfo}) {
+export default function EliminateUser({route, userInfo, navigation}) {
     const { signOut } = useContext(AuthContext);
 
     const [formData, setForm] = useState({
@@ -14,7 +14,8 @@ export default function EliminateUser({route, userInfo}) {
     useEffect(() => {        
         setForm({
             user_Id: route.params.userInfo?._id
-        })        
+        })       
+        navigation.setOptions({ title: "Eliminacion de Cuenta" }) 
     },[])
 
     const eliminateAccount = () => {
@@ -69,7 +70,7 @@ export default function EliminateUser({route, userInfo}) {
                     null
                     } */}
 
-                    <Button onPress={eliminateAccount} title="Eliminar Cuenta" />
+                    <Button onPress={eliminateAccount} title="Eliminar Cuenta" color={Config.primaryColor}/>
                 </View>
             </View>
         </View>

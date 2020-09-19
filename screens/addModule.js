@@ -17,7 +17,9 @@ export default function Curso({ route ,navigation }) {
     useEffect(() => {
         const { coursesId } =  route.params;
         setCourse_Id(coursesId)
-        fetchCourseData(coursesId)        
+        fetchCourseData(coursesId)                
+        navigation.setOptions({ title: "Configuracion del Curso" })
+
     },[])
 
     useEffect(() => {

@@ -10,8 +10,10 @@ export default function MyCoursesCreated({navigation}) {
     const [textSearch, setTextSearch] = useState("")
     const [user_id, setUser_Id] = useState(null)
     const [data, setData] = useState([])
+    const [originalData, setOriginalData] = useState([]);
 
     useEffect(() => {
+        navigation.setOptions({ title: "Mis Cursos Creados" })
         getUser()
     },[])
 
@@ -29,6 +31,7 @@ export default function MyCoursesCreated({navigation}) {
         .then(res => {
             if (res.data.response) {
                 setData(res.data.data)
+                setOriginalData(res.data.data)
             }else{
                 console.log(res.data.message)
             }
@@ -40,20 +43,67 @@ export default function MyCoursesCreated({navigation}) {
         navigation.navigate('AddModule', {coursesId})
     }
 
+    const eliminarDiacriticos = (text) => {
+        return text.normalize('NFD').replace(/[\u0300-\u036f]/g,"");
+    }
+    
+    const filtroSearch = (element, value) => {
+        console.log(element)
+        let x = eliminarDiacriticos(element.title.toLowerCase())
+        if (x.includes(eliminarDiacriticos(value.toLowerCase()))) {
+            return true
+        }else{
+            return false
+        }
+    }
+    
+    const handleChangeBar = (arrayCourses, originalInfo,text) => {
+        let dataChange = arrayCourses;        
+        if (text != "") {
+            dataChange.coursesTeacher = arrayCourses.coursesTeacher.filter(x => filtroSearch(x, text));                   
+            return dataChange
+        }else{               
+            console.log(originalInfo)     
+            return originalInfo;  
+        } 
+    }
+
+    const handleSerachChange = (text) => {        
+        const dataNew = data;
+        setTextSearch(text)             
+        // setData(handleChangeBar(data, originalData, text))
+        if (text != "") {
+            const arrayCourses = data.coursesTeacher.filter(x => filtroSearch(x, text))
+            dataNew.coursesTeacher = arrayCourses;
+            setData(dataNew)
+        }else{
+            setData(originalData)
+        }
+    }
+
+    const handlebackspace= ({nativeEvent }) => {
+        if (nativeEvent.key === 'Backspace') {
+            console.log("Aqui")
+            // setData(handleChangeBar(originalData, originalData, textSearch))                                           
+            setData(originalData)                                   
+        }
+    }
+
     return(
         <View style={styles.container}>            
-            <Searchbar 
+            {/* <Searchbar 
                 placeholder="Buscar"
-                onChangeText={() => setTextSearch()}
+                onChangeText={handleSerachChange}
                 value={textSearch}
                 style={styles.serachBox}
-            />
+                onKeyPress={handlebackspace}
+            /> */}
 
             <FlatList
                 data={data.coursesTeacher}
                 keyExtractor={item => item._id}
                 renderItem={ ({item}) => 
-                    <TouchableOpacity onPress={() => onPress(item._id)}>
+                    <TouchableOpacity onPress={() => onPress(item._id)} key={item._id}>
                         <View style={styles.containerCard}>
                             <Card elevation={7} style={styles.card}>
                                 <View style={{flexDirection: "row"}}>

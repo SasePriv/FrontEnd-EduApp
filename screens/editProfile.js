@@ -6,7 +6,7 @@ import axios from 'axios'
 import Config from '../config'
 import AsyncStorage from '@react-native-community/async-storage';
 
-export default function EditProfile({route, userInfo}) {
+export default function EditProfile({route, userInfo, navigation}) {
 
     const [formData, setForm] = useState({
         imageUnique: null,
@@ -31,7 +31,8 @@ export default function EditProfile({route, userInfo}) {
             imageUnique: route.params.userInfo?.profile_image,
             name: route.params.userInfo?.name,
             user_Id: route.params.userInfo?._id
-        })        
+        })       
+        navigation.setOptions({ title: "Editar Mi Perfil" }) 
     },[])    
 
     const getPermissionAsync = async () => {
@@ -183,7 +184,7 @@ export default function EditProfile({route, userInfo}) {
 
                 <View style={styles.btnBox}>
                     <View style={styles.saveBtn}>
-                        <Button onPress={updateProfile} title={"Guardar Cambios"} />
+                        <Button onPress={updateProfile} title={"Guardar Cambios"} color={Config.primaryColor}/>
                     </View>
                 </View>
             </View>

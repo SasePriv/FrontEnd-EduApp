@@ -33,7 +33,7 @@ function AddCourses({route,navigation,openModal}) {
         contador: 0,
         typeService: "free",
         hours: "",
-        price: 10,
+        price: 0,
         imageUnique: null,      
         edit: false,
         editSecond: false  
@@ -611,7 +611,7 @@ function AddCourses({route,navigation,openModal}) {
                         <View style={styles.centrar}>
                             {formData.imageUnique && <Image source={{ uri: formData.imageUnique }} style={{ width: 390, height: 200 }} />}
                             <View style={{marginTop: 10}}>
-                                <Button title="Subir imagen desde la galeria" onPress={_pickFirstImage} />                    
+                                <Button title="Subir imagen desde la galeria" onPress={_pickFirstImage} color={Config.primaryColor}/>                    
                             </View>
                         </View>                        
                     </View>                 
@@ -699,7 +699,7 @@ function AddCourses({route,navigation,openModal}) {
                         </View>        
                     </View>
                     <View style={[styles.formGroup, formData.typeService == "free" && styles.formPrice]}>  
-                        <Text style={styles.labelText}>Precio en Pesos</Text>
+                        <Text style={styles.labelText}>Precio en Dolares</Text>
                         <View style={styles.containerInput}>                                        
                             <FontAwesome5 name="money-bill-wave" style={styles.icon} size={24} color={Config.primaryColor} />
                             <TextInput
@@ -738,11 +738,11 @@ function AddCourses({route,navigation,openModal}) {
                     {edit 
                     ? 
                     <View style={styles.formGroup}>
-                        <Button title="Editar Curso" onPress={editCourse} />
+                        <Button title="Editar Curso" onPress={editCourse} color={Config.primaryColor}/>
                     </View>
                     : 
                     <View style={styles.formGroup}>
-                        <Button title="Crear Curso" onPress={createCourse} />
+                        <Button title="Crear Curso" onPress={createCourse} color={Config.primaryColor}/>
                     </View>
                     }                                        
                     {/* <View style={styles.formGroup}>  

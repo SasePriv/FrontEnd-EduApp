@@ -6,6 +6,9 @@ import * as Icon from "@expo/vector-icons"
 import { connect } from "react-redux"
 import ParalaxImage from '../components/parallaxImage'
 import Config from '../config'
+import { FontAwesome5 } from '@expo/vector-icons'; 
+
+import LinearGradient from 'react-native-linear-gradient';
 
 const screenHeight = Dimensions.get("window").height
 
@@ -73,7 +76,7 @@ function CustomModal({action, CloseModal, data, close, getFreeCourse, getPayCour
                     {/* Boton Close */}
                     <TouchableOpacity
                         onPress={closeModal}
-                        style={{ position: "absolute", top: 175, left: "50%", marginLeft: -22, zIndex: 1 }}
+                        style={{ position: "absolute", top: 10, left: "8%", marginLeft: -22, zIndex: 1 }}
                     >
                         <CloseView style={{ elevation: 10 }}>
                             <Icon.Ionicons name='ios-close' size={44} color={Config.primaryColor} />
@@ -81,24 +84,31 @@ function CustomModal({action, CloseModal, data, close, getFreeCourse, getPayCour
                     </TouchableOpacity>   
 
                     {/* Barra de Precio */}
-                    <PriceBar>
-                        <PriceText style={styles.shadow}>PRECIO: {data?.dataSelectedCourse?.price ?  data?.dataSelectedCourse?.price + "$" : "FREE" }</PriceText>
+                    {/* <PriceBar> */}
+                    <LinearGradient start={{x: 0, y: 0}} end={{x: 1.1, y: 0}} colors={['#e55a5b', '#fedf67']} style={[styles.linearGradientPrice, styles.shadow]}>
+                        <PriceText style={styles.shadow}>PRECIO: {data?.dataSelectedCourse?.price ?  data?.dataSelectedCourse?.price + " " : "FREE" }</PriceText>
+                        <FontAwesome5 style={styles.iconCoin} name="coins" size={23} color="#ffffff"/>
                         <Icon.FontAwesome5 style={styles.cartIcon} name='shopping-cart' size={22} color='white' />
                         <TouchableOpacity onPress={() => handleAcquiere(data)}>
                             <ButtonPay style={styles.shadow}>
                                 <PriceButton>GET</PriceButton>
                             </ButtonPay>      
-                        </TouchableOpacity>                  
-                    </PriceBar>
+                        </TouchableOpacity> 
+                    </LinearGradient>                
+                    {/* </PriceBar> */}
 
                     {/* Cuuerpo */}
 
-                    <Body>                        
-                        <Text style={styles.subTitleImagenes}>Imagenes</Text>
+                    <Body>  
+                        <LinearGradient start={{x: 0, y: 0}} end={{x: 1.1, y: 0}} colors={['#e55a5b', '#fedf67']} style={styles.linearGradient}>
+                            <Text style={styles.subtitleInside}>Imagenes</Text>
+                        </LinearGradient>
                         <ParalaxImage 
                             arrayImage={data?.attachmentSelectedCourse}
                         />
-                        <Text style={styles.subTitleDescrip}>Descripcion</Text>
+                        <LinearGradient start={{x: 0, y: 0}} end={{x: 1.1, y: 0}} colors={['#e55a5b', '#fedf67']} style={styles.linearGradient}>
+                            <Text style={styles.subtitleInside}>Descripcion</Text>
+                        </LinearGradient>
                         <ModelDescripctionBody>{data?.dataSelectedCourse?.description}</ModelDescripctionBody>
                         <List.Accordion
                             title="Modulos"
@@ -164,6 +174,28 @@ const styles = StyleSheet.create({
         shadowRadius: 3.84,
         elevation: 4,
     },
+    subtitleInside:{
+        fontSize: 20,
+        color: "white",
+        fontWeight: "bold",        
+    },
+    linearGradient:{
+        flex: 1,
+        padding: 20,
+        paddingBottom: 5,
+        paddingTop: 5,
+        width: 150,
+        borderBottomRightRadius: 40,
+        borderTopRightRadius: 5,
+        marginTop: 10,
+        marginBottom: 10
+    },
+    linearGradientPrice:{
+        height: 45,
+        flexDirection: "row",
+        borderColor: "white",
+        // borderBottomWidth: 3
+    },
     subTitleDescrip: {
         padding: 20,
         paddingBottom: 5,
@@ -228,6 +260,10 @@ const styles = StyleSheet.create({
     noDisponible: {
         marginLeft: 10,
         marginBottom: 10
+    },
+    iconCoin:{
+        left: -150,
+        marginTop: 8
     }
 })
 
@@ -290,7 +326,7 @@ const Container = styled.View`
     background: white;
     width: 100%;
     height: 100%;
-    z-index: 100;
+    z-index: 100;    
 `
 
 const Header = styled.View`
@@ -308,7 +344,7 @@ const CloseView = styled.View`
 `
 
 const Body = styled.View`
-    background: white;
+    background: white;    
 `
 
 function mapStateToProps(state) {

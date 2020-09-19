@@ -4,6 +4,8 @@ import { StyleSheet, Text, View, Button, ScrollView, Image, TextInput, Touchable
 import axios from 'axios'
 import Config from '../config'
 
+import LinearGradient from 'react-native-linear-gradient';
+
 export default function ForgotPassword({navigation}) {
 
     const [email, setEmail] = useState("");
@@ -49,7 +51,7 @@ export default function ForgotPassword({navigation}) {
 
     return(
         <ScrollView style={{backgroundColor: "white"}}>
-        <View style={styles.container}>
+        <LinearGradient start={{x: 0, y: 0}} end={{x: 1.1, y: 0}} colors={['#e55a5b', '#fedf67']} style={styles.container}>
             <Image 
                 style={styles.logoLogin}
                 source={require('../assets/logo.png')}
@@ -83,7 +85,7 @@ export default function ForgotPassword({navigation}) {
 
                     <View style={styles.botones}>
                         <View style={styles.btn}>
-                            <Button onPress={handleSubmitForgot} title="Cambiar Contraseña"/>
+                            <Button onPress={handleSubmitForgot} title="Cambiar Contraseña" color={Config.primaryColor}/>
                         </View>
                     </View>
                 </View>
@@ -96,7 +98,7 @@ export default function ForgotPassword({navigation}) {
 
                 
             </View>
-        </View>
+        </LinearGradient>
         </ScrollView>
     )
 }
@@ -114,7 +116,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: Config.primaryColor,
+        // backgroundColor: Config.primaryColor,
         alignItems: "center",        
     },
     logoLogin: {

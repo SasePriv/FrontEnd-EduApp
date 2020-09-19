@@ -8,6 +8,8 @@ import { FontAwesome } from '@expo/vector-icons';
 import axios from 'axios'
 import Config from '../config'
 
+import LinearGradient from 'react-native-linear-gradient';
+
 import { AuthContext } from '../components/context'
 
 export default function RegisterScreen({navigation}) {
@@ -240,7 +242,7 @@ export default function RegisterScreen({navigation}) {
 
     return(
         <ScrollView style={{backgroundColor: "white"}}>
-        <View style={styles.container}>
+        <LinearGradient start={{x: 0, y: 0}} end={{x: 1.1, y: 0}} colors={['#e55a5b', '#fedf67']} style={styles.container}>
             {/* <Image 
                 style={styles.logoLogin}
                 source={require('../assets/logo.png')}
@@ -376,7 +378,7 @@ export default function RegisterScreen({navigation}) {
                 }
 
                 <View style={{marginTop: 10}}>
-                    <Button onPress={handleSubmit} title="Registrarse" />
+                    <Button onPress={handleSubmit} title="Registrarse" color={Config.primaryColor} />
                 </View>
                 
                 {/* <Button title="Show Date Picker" onPress={showDatePicker} /> */}
@@ -387,7 +389,7 @@ export default function RegisterScreen({navigation}) {
                     onCancel={hideDatePicker}
                 />
             </View>
-        </View>
+        </LinearGradient>
         </ScrollView>
     )
 }
@@ -405,7 +407,7 @@ const styles = StyleSheet.create({
     },
     container: {
         flex: 1,
-        backgroundColor: Config.primaryColor,
+        // backgroundColor: Config.primaryColor,
         // alignItems: "center",        
     },
     cardContainer: {

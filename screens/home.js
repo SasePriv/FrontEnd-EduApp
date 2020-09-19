@@ -10,6 +10,8 @@ import Config from '../config'
 import { FontAwesome5 } from '@expo/vector-icons'; 
 import { consumePurchaseAndroid } from 'react-native-iap'
 
+import LinearGradient from 'react-native-linear-gradient';
+
 
 const screenHeight = Dimensions.get("window").height
 let status = false
@@ -42,6 +44,14 @@ function Home({navigation, openModal}) {
         handleAsync()   
         wait(2000).then(() => setRefreshing(false));
     }, []);
+
+    useEffect(() => {
+        const refreshUserData = navigation.addListener('focus', () => {
+            fetchCategoryData();
+            fecthLastCourses();
+            handleAsync()   
+          });
+    }, [navigation])
 
     useEffect(() => {
         fetchCategoryData()
@@ -213,6 +223,7 @@ function Home({navigation, openModal}) {
         dataSend.append('coursesId', course._id);
         dataSend.append('typeService', course.typeService);
         dataSend.append('priceCoin', course.price);
+        dataSend.append('profesor_id', course.user_id);
 
         await axios
         .post( Config.urlBackEnd + '/acquireCourse', dataSend)
@@ -246,26 +257,32 @@ function Home({navigation, openModal}) {
     }
 
     return(
-        <View>
+        <View style={{height: "100%"}}>
+            
+            <ScrollView
+                refreshControl={
+                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                 }
+                style={{height: "100%"}}
+            >
+                <LinearGradient start={{x: 0, y: 0}} end={{x: 1.1, y: 0}} colors={['#e55a5b', '#fedf67']} style={styles.linearGradient}>    
+                    <Text style={styles.subtitleInside}>Nuevo</Text>
+                </LinearGradient>   
+                <ContentNew 
+                    onPressFun={onPressFunction}
+                    dataLastCourses={lastestCourses}
+                />
+                <LinearGradient start={{x: 0, y: 0}} end={{x: 1.1, y: 0}} colors={['#e55a5b', '#fedf67']} style={styles.linearGradient}>
+                    <Text style={styles.subtitleInside}>Categorias</Text>
+                </LinearGradient>
+                <GridCategory naviga={navigation} dataCategory={dataCategory}/>
+            </ScrollView>
             <CustomModal 
                 data={selected}
                 close={close}
                 getFreeCourse={getFreeCourse}
                 getPayCourse={getPayCourse}
             />
-            <ScrollView
-                refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                 }
-            >
-                <Text style={styles.subTitle}>Nuevo</Text>
-                <ContentNew 
-                    onPressFun={onPressFunction}
-                    dataLastCourses={lastestCourses}
-                />
-                <Text style={styles.subTitleCate}>Categorias</Text>
-                <GridCategory naviga={navigation} dataCategory={dataCategory}/>
-            </ScrollView>
         </View>
     )
 }
@@ -284,6 +301,21 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         borderBottomRightRadius: 40,
         borderTopRightRadius: 5
+    },
+    subtitleInside:{
+        fontSize: 25,
+        color: "white",
+        fontWeight: "bold",        
+    },
+    linearGradient:{
+        flex: 1,
+        padding: 20,
+        paddingBottom: 5,
+        paddingTop: 5,
+        width: 180,
+        borderBottomRightRadius: 40,
+        borderTopRightRadius: 5,
+        marginTop: 10
     },
     subTitleCate: {
         padding: 20,

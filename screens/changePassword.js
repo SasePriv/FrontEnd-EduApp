@@ -6,7 +6,7 @@ import axios from 'axios'
 import Config from '../config'
 import AsyncStorage from '@react-native-community/async-storage';
 
-export default function ChangePassword({route, userInfo}) {
+export default function ChangePassword({route, userInfo, navigation}) {
 
     const [formData, setForm] = useState({
         user_Id: "",
@@ -23,6 +23,7 @@ export default function ChangePassword({route, userInfo}) {
         setForm({
             user_Id: route.params.userInfo?._id
         })        
+        navigation.setOptions({ title: "Cambiar la Contraseña" })
     },[])
 
     const changePassword = () =>{
@@ -163,7 +164,7 @@ export default function ChangePassword({route, userInfo}) {
                     null
                     }
 
-                    <Button onPress={changePassword} title="Cambiar Contraseña" />
+                    <Button onPress={changePassword} color={Config.primaryColor} title="Cambiar Contraseña" />
                 </View>
             </View>
         </View>

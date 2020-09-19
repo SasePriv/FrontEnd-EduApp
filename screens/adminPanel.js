@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { FontAwesome5 } from '@expo/vector-icons'; 
 import Config from '../config'
+import LinearGradient from 'react-native-linear-gradient';
 
 export default function AdminPanel({navigation}) {
 
@@ -16,11 +17,11 @@ export default function AdminPanel({navigation}) {
     return(
         <View>
             <TouchableOpacity onPress={handlePressTeachers}>
-            <View style={[styles.cardBlue, styles.shadow]}>
+            <LinearGradient start={{x: 0, y: 0}} end={{x: 1.1, y: 0}} colors={['#e55a5b', '#fedf67']} style={[styles.linearGradient, styles.shadow]}>
                 <Text style={styles.subTitle}>Administrador</Text>
                 <Text style={styles.subTitle}>de Profesores</Text>
                 <FontAwesome5 style={styles.icon} name="chalkboard-teacher" size={50} color="#ffffff" />
-            </View>
+            </LinearGradient>                
             </TouchableOpacity>
 
             <TouchableOpacity onPress={handlePressCategory}>
@@ -46,6 +47,14 @@ const styles = StyleSheet.create({
     },
     cardBlue:{
         backgroundColor: Config.primaryColor,
+        height: 250,
+        margin: 30,
+        borderRadius: 20,
+        padding: 20,        
+        alignItems: "center",
+        marginVertical: 10
+    },
+    linearGradient:{
         height: 250,
         margin: 30,
         borderRadius: 20,
